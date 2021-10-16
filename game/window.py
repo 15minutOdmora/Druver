@@ -16,6 +16,7 @@ class Window:
         Method loads the current page and everything else that should be drawn to the screen.
         """
         self.screen.fill((0, 0, 0))
+        self.game.controller.current_page.update()
         self.game.controller.current_page.draw()
         self.game.development.draw()  # Draw development
         pygame.display.update()

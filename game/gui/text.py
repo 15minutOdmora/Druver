@@ -4,32 +4,25 @@ Module for text classes.
 
 import pygame
 
+from game.gui.item import StaticItem
 
-class Text:
-    def __init__(self, text, font="aria", size=21, position=(0, 0), color=(255, 255, 255)):
-        """
-        :param text:
-        :param font:
-        :param size:
-        :param position:
-        :param color:
-        """
+
+class Text(StaticItem):
+    def __init__(self, position=(0, 0), text="", font="aria", size=21, color=(255, 255, 255)):
         self.screen = pygame.display.get_surface()
-        self.items = []
+        pygame.font.init()
         self.color = color
         self.text = text
-
-        pygame.font.init()
         self.font = pygame.font.SysFont(font, size)
-        self.position = position
         self.surface = self.font.render(text, True, self.color)
-        self.size = self.font.size(text)
-        self.width, self.height = self.size
+        size = self.font.size(text)
+
+        super().__init__(position, size)
 
     def update(self):
+        # Override parents method
         self.surface = self.font.render(self.text, True, self.color)
         self.size = self.font.size(self.text)
-        self.width, self.height = self.size
 
     def draw(self):
         self.screen.blit(self.surface, self.position)
