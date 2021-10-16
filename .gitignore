@@ -1,0 +1,5 @@
+# Pycharm things
+.idea
+
+# Venv
+/venv
