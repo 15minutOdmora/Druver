@@ -7,3 +7,6 @@
 # Pyinstaller builds
 /build
 /dist
+
+# Ignore generated files
+__pycache__

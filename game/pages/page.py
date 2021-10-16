@@ -2,12 +2,10 @@
 Abstract class definition for all pages to follow.
 """
 
-from abc import ABC
-
 import pygame
 
 
-class Page(ABC):
+class Page:
     def __init__(self, controller):
         self.screen = pygame.display.get_surface()
         self.controller = controller
@@ -18,8 +16,8 @@ class Page(ABC):
         self.items.append(item)
 
     def update(self):
-        # Calls update on all items
-        pass
+        for item in self.items:
+            item.update()
 
     def draw(self):
         for item in self.items:
