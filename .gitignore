@@ -3,3 +3,7 @@
 
 # Venv
 /venv
+
+# Pyinstaller builds
+/build
+/dist
