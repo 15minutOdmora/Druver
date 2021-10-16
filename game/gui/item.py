@@ -70,19 +70,19 @@ class Item:
         self.rect.size = new_size
 
     @property
-    def width(self):
+    def width(self) -> int:
         return self.rect.width
 
     @width.setter
-    def width(self, new_width):
+    def width(self, new_width: int) -> None:
         self.rect.width = new_width
 
     @property
-    def height(self):
+    def height(self) -> int:
         return self.rect.height
 
     @height.setter
-    def height(self, new_height):
+    def height(self, new_height: int) -> None:
         self.rect.height = new_height
 
     def on_hover(self):
@@ -111,14 +111,14 @@ class Item:
 class StaticItem:
     """
     Base class for defining static items that do not move, or can have actions performed on them.
-    The main difference between the Item class is the lack of on_hover / on_click methods, and that thsi class
+    The main difference between the Item class is the lack of on_hover / on_click methods, and that this class
     does not need the controller to be passed.
-    These also do not include other items.
+    Items can not be attached to this class.
     """
     def __init__(self,
                  position=[0, 0],
                  size=(1, 1),
-                 on_click: Callable = lambda: None
+                 visible: bool = False
                  ):
         """
         :param position: list[int] -> Position of item on screen
@@ -127,12 +127,12 @@ class StaticItem:
         """
         self.screen = pygame.display.get_surface()
 
+        self.items = []
+
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
 
-        self.visible = True
+        self.visible = visible
         self.selected: bool = False
-
-        self._on_click: Callable = on_click
 
     @property
     def position(self) -> list[int]:
@@ -168,25 +168,34 @@ class StaticItem:
         self.rect.size = new_size
 
     @property
-    def width(self):
+    def width(self) -> int:
         return self.rect.width
 
     @width.setter
-    def width(self, new_width):
+    def width(self, new_width: int) -> None:
         self.rect.width = new_width
 
     @property
-    def height(self):
+    def height(self) -> int:
         return self.rect.height
 
     @height.setter
-    def height(self, new_height):
+    def height(self, new_height: int) -> None:
         self.rect.height = new_height
+
+    def add_item(self, item: any, *args) -> None:
+        """
+        Method adds item to self.
+        :param item: Item -> Any item that has the update and draw methods
+        """
+        self.items.append(item)
 
     def update(self):
         """ Used for updating all items attached to it(sizes, positions, etc.). """
-        pass
+        for item in self.items:
+            item.update()
 
     def draw(self):
-        """ Used for drawing itseld and every item attached to it. """
-        pass
+        """ Used for drawing itself and every item attached to it. """
+        for item in self.items:
+            item.draw()
