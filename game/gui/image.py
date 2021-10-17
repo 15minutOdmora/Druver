@@ -24,7 +24,7 @@ class StaticImage(StaticItem):
         super().__init__(position, size)
 
     def draw(self):
-        """ Used for drawing itseld and every item attached to it. """
+        """ Used for drawing itself and every item attached to it. """
         self.screen.blit(self.image, self.position)
         for item in self.items:
             item.draw()
