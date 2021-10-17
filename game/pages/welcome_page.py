@@ -5,13 +5,9 @@ Welcome page loads when the game is ran.
 import pygame
 
 from game.pages.page import Page
-from game.gui.text import Text
+from game.gui.text import CustomText
 from game.gui.button import Button
 from game.gui.grid import Grid
-
-
-def on_click_test():
-    print("Works")
 
 
 class WelcomePage(Page):
@@ -26,8 +22,10 @@ class WelcomePage(Page):
 
         self.test_button = Button(
             self.controller,
-            text="Testing",
-            on_click=on_click_test
+            text=CustomText(
+                text="Start Game",
+                size=30
+            )
         )
         self.grid.add_item(
             row=3,
