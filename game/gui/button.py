@@ -9,6 +9,7 @@ import pygame
 from game.gui.item import Item
 from game.gui.text import Text
 from game.constants import BaseColors
+from game.helpers.file_handling import DirectoryReader, ImageLoader
 
 
 class Button(Item):
@@ -39,8 +40,6 @@ class Button(Item):
         self.border_color = self._border_color
 
         self.text.position = self.get_text_position()
-
-        self.items = []
 
         self.items.append(
             self.text
@@ -82,5 +81,68 @@ class Button(Item):
         self.text.color = self.fill_color
         self.text.update()
 
+        for item in self.items:
+            item.draw()
+
+
+class AnimatedButton(Item):
+    def __init__(self,
+                 controller,
+                 folder_path: str,
+                 position: list[int] = [0, 0],
+                 on_click: Callable = lambda: None,
+                 animation_speed = 1,
+                 ):
+        # Initialize image lists and indexes(current displayed images)
+        self.normal_images, self.on_click_images, self.on_hover_images = [], [], []
+        self.normal_images_index, self.on_click_images_index, self.on_hover_images_index = 0, 0, 0
+        self.current_image_list = self.normal_images
+        self.current_image_index = 0
+        # Get all files into lists
+        all_folders = DirectoryReader.get_all_folders(folder_path)
+        possible_folders = {
+            "normal": self.normal_images,
+            "on_click": self.on_click_images,
+            "on_hover": self.on_hover_images
+        }
+        for name, path in all_folders:
+            if name in possible_folders.keys():
+                possible_folders[name] += ImageLoader.load_transparent_folder(path)
+
+        size = self.normal_images[0].get_size()
+        self.was_clicked = False
+        self.animation_speed = animation_speed
+
+        super().__init__(controller, position, size, on_click)
+
+    def update(self):
+        """ Overwrite items update method. """
+        self.hovered = self.rect.collidepoint(self.controller.mouse_position)
+        if self.hovered:
+            if not (self.on_hover_images_index >= len(self.on_hover_images) - 1):
+                self.on_hover_images_index += self.animation_speed
+            if self.controller.mouse_clicked or self.was_clicked:
+                self.was_clicked = True
+                if not (self.on_click_images_index >= len(self.on_click_images) - 1):
+                    self.on_click_images_index += self.animation_speed
+                    self.current_image_list = self.on_click_images
+                    self.current_image_index = self.on_click_images_index
+                else:
+                    self.on_click()
+                    self.was_clicked = False
+            else:
+                self.current_image_list = self.on_hover_images
+                self.current_image_index = self.on_hover_images_index
+                self.on_click_images_index = 0
+        else:
+            self.on_hover_images_index = 0
+            self.current_image_list = self.normal_images
+            self.current_image_index = self.normal_images_index
+        for item in self.items:
+            item.update()
+
+    def draw(self):
+        """ Overwrite items draw method. """
+        self.screen.blit(self.current_image_list[round(self.current_image_index)], self.position)
         for item in self.items:
             item.draw()

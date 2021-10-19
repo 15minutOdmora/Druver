@@ -46,7 +46,7 @@ class Paths:
     # images
     images = join_paths(assets, "images")
     logo = join_paths(images, "logo")
-    DRUVER_BIG_LOGO = join_paths(logo, "druver_big_logo.png")
+    DRUVER_BIG_LOGO = join_paths(logo, "druver_big_logo_render_1.png")
 
     # maps
     maps = join_paths(assets, "maps")
@@ -57,3 +57,6 @@ class Paths:
     # sounds
     sounds = join_paths(assets, "sounds")
     radio = join_paths(assets, "radio")
+
+    buttons = join_paths(images, "buttons")
+    start_game_button = join_paths(buttons, "start_game_button")
