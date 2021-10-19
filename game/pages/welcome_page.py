@@ -7,7 +7,7 @@ import pygame
 from game.pages.page import Page
 from game.constants import Paths
 from game.gui.text import CustomText
-from game.gui.button import Button
+from game.gui.button import Button, AnimatedButton
 from game.gui.image import StaticImage
 from game.gui.grid import Grid
 
@@ -22,13 +22,9 @@ class WelcomePage(Page):
             visible=False
         )
 
-        self.test_button = Button(
+        self.test_button = AnimatedButton(
             self.controller,
-            text=CustomText(
-                text="Start Game",
-                size=30
-            ),
-            size=(130, 40)
+            folder_path=Paths.start_game_button
         )
         self.grid.add_item(
             row=4,

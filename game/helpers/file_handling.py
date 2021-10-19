@@ -84,7 +84,7 @@ class DirectoryReader:
             dir_path (str): Path to directory to search from
 
         Returns:
-            dict: Where the key is the name of the folder and the value is its path
+            tuple: 1st. element is name of folder, second is path.
         """
         folder_list = []
         for item in os.scandir(dir_path):
