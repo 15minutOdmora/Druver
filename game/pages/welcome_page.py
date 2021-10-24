@@ -42,7 +42,8 @@ class WelcomePage(Page):
             text=CustomText(
                 text="Start Game",
                 size=36
-            )
+            ),
+            on_click=helpers.create_callable(self.controller.redirect_to_page, "StartGamePage")
         )
         self.grid.add_item(
             row=4,
