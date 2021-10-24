@@ -48,7 +48,10 @@ class Input:
                     self.game.development.visible = not self.game.development.visible
                 """elif event.key == pygame.K_r:
                     self.game.window.radio = not self.game.window.radio"""
-                pass
+                if event.key == pygame.K_ESCAPE:
+                    self.controller.esc_clicked = True
+            else:
+                self.controller.esc_clicked = False
             # Quit event
             if event.type == pygame.QUIT:
                 pygame.quit()

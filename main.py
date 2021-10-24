@@ -21,6 +21,7 @@ class Game:
 
         self.FPS = constants.FPS_CAP
         self.clock = pygame.time.Clock()
+        self.paused = False  # If game is paused
 
         self.controller = Controller(self)
         self.window = Window(self)

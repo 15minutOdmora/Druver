@@ -6,7 +6,7 @@ Functions and or objects should be written in pure Python.
 from typing import Callable
 
 
-def create_callable(func: Callable, *args, **kwargs):
+def create_callable(func: Callable, *args, **kwargs) -> Callable:
     """
     Function creates a callable function where the called function gets passed as an argument along with its
     args and kwargs.
