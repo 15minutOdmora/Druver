@@ -16,11 +16,11 @@ class Button(Item):
     def __init__(self,
                  controller,
                  position: list[int] = [0, 0],
-                 size=(150, 60),
+                 size: tuple[int] = (150, 60),
                  on_click: Callable = lambda: None,
                  text: str = "",
-                 fill_color: tuple = BaseColors.button_fill,
-                 border_color: tuple = BaseColors.button_outline):
+                 fill_color: tuple[int] = BaseColors.button_fill,
+                 border_color: tuple[int] = BaseColors.button_outline) -> object:
         super().__init__(controller, position, size, on_click)
 
         self.screen = pygame.display.get_surface()

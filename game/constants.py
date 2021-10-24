@@ -8,6 +8,8 @@ NAME = "Druver"
 SCREEN_SIZE = (1280, 720)
 FPS_CAP = 60
 
+DEVELOPMENT_URL = "https://github.com/15minutOdmora/Druver"
+
 
 class Colors:
     white = (255, 255, 255)
@@ -46,7 +48,7 @@ class Paths:
     # images
     images = join_paths(assets, "images")
     logo = join_paths(images, "logo")
-    DRUVER_BIG_LOGO = join_paths(logo, "druver_big_logo_render_1.png")
+    DRUVER_BIG_LOGO = join_paths(logo, "druver_big_logo.png")
 
     # maps
     maps = join_paths(assets, "maps")

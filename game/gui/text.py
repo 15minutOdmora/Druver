@@ -30,7 +30,7 @@ class Text(StaticItem):
 
 
 class CustomText(StaticItem):
-    def __init__(self, text, font=Paths.LO_RES_SERIF, size=21, position=(0, 0), color=BaseColors.main_text):
+    def __init__(self, text, font=Paths.LO_RES_NARROW, size=21, position=(0, 0), color=BaseColors.main_text):
         self.screen = pygame.display.get_surface()
         pygame.font.init()
         self.color = color

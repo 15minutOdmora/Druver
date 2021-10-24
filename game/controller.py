@@ -3,6 +3,8 @@ Module containing the controller class.
 
 Controller class object acts as an intermediate between game wide objects, ex. page redirection, ...
 """
+
+from typing import Callable
 import sys
 import inspect
 
