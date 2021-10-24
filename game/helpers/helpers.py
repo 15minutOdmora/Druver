@@ -3,6 +3,8 @@ Module containing various helper functions that don't belong in specific files.
 Functions and or objects should be written in pure Python.
 """
 
+from typing import Callable
+
 
 def create_callable(func: Callable, *args, **kwargs):
     """
