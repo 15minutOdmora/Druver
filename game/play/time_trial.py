@@ -3,6 +3,7 @@ Time trial module, has TimeTrial class that is similar to Page classes but items
 """
 
 from game.play.game_objects.map import Map
+from game.play.game_objects.player import Player
 
 
 class TimeTrial:
@@ -17,10 +18,13 @@ class TimeTrial:
             folder_name="testing_map"
         )
         # Load player
+        self.player = Player(self.game, self.map, "Testing")
 
     def update(self):
         if not self.game.paused:
+            self.player.update()
             self.map.update()
 
     def draw(self):
         self.map.draw()
+        self.player.draw()

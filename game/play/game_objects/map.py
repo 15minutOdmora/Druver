@@ -119,19 +119,19 @@ class Map:
         self.visible_tiles, visible_tiles = [], []
         # Corners
         top_left = get_indexes(
-            [self.offset[0] - self.half_screen_width, self.offset[1] - self.half_screen_height],
+            [int(self.offset[0] - self.half_screen_width), int(self.offset[1] - self.half_screen_height)],
             self.tile_size
         )
         top_right = get_indexes(
-            [self.offset[0] + self.half_screen_width, self.offset[1] - self.half_screen_height],
+            [int(self.offset[0] + self.half_screen_width), int(self.offset[1] - self.half_screen_height)],
             self.tile_size
         )
         bottom_right = get_indexes(
-            [self.offset[0] - self.half_screen_width, self.offset[1] + self.half_screen_height],
+            [int(self.offset[0] - self.half_screen_width), int(self.offset[1] + self.half_screen_height)],
             self.tile_size
         )
         bottom_left = get_indexes(
-            [self.offset[0] + self.half_screen_width, self.offset[1] + self.half_screen_height],
+            [int(self.offset[0] + self.half_screen_width), int(self.offset[1] + self.half_screen_height)],
             self.tile_size
         )
         # Create list
@@ -147,14 +147,6 @@ class Map:
         Method updates tiles. (And currently also the offset)
         """
         self.update_visible_tiles_indexes()
-        if self.controller.key_pressed["right"]:
-            self.offset[0] += 3
-        if self.controller.key_pressed["left"]:
-            self.offset[0] -= 3
-        if self.controller.key_pressed["up"]:
-            self.offset[1] -= 3
-        if self.controller.key_pressed["down"]:
-            self.offset[1] += 3
 
     def draw(self) -> None:
         """
