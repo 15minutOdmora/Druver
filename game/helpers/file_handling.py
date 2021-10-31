@@ -5,6 +5,7 @@ Module for anything related to files
 from __future__ import annotations
 import os
 import time
+import json
 
 import pygame
 
@@ -142,3 +143,66 @@ class DirectoryReader:
             if item.is_file():
                 file_list.append((item.name, os.path.abspath(item.path)))  # Append tuple
         return file_list
+
+
+class Json:
+    """
+    Class for loading, writing and updating data in json files.
+    All json files must contain dictionaries as the main scope object.
+    """
+    @staticmethod
+    def load(path: str) -> dict:
+        """
+        Method loads a single json file, returning its contents.
+
+        :param path: Path to Json file
+        :return: dict or list, content of the Json file
+        """
+        try:
+            with open(path, "r") as f:
+                data = json.load(f)
+            return data
+        except FileNotFoundError:
+            print(f"Json.load: Unable to find Json file on path:\n    {path}")
+
+    @staticmethod
+    def update(path: str, data: dict) -> dict:
+        """
+        Method will update the dictionary with data and return the updated dict.
+
+        :param path: Path to Json file
+        :param data: Dictionary of key-value pairs to update in the json file
+        :return: Updated dictionary
+        """
+        # Read data
+        try:
+            with open(path, "r") as f:
+                read_data = json.load(f)
+        except FileNotFoundError:
+            print(f"Json.update: Unable to find Json file on path:\n    {path}")
+            return
+        # Update
+        read_data.update(data)
+        # Save, at this point we know the path exists
+        with open(path, "w") as f:
+            json.dump(read_data, f, indent=4)
+        return read_data
+
+    @staticmethod
+    def save(path: str, data: dict) -> None:
+        """
+        Method saves data into the path file.
+
+        :param path: Path to Json file to save to
+        :param data: Dictionary to save in the json file
+        """
+        # Check if path contains .json
+        if not (".json" in path):
+            path += ".json"
+        # Write data
+        try:
+            with open(path, "w") as f:
+                json.dump(data, f, indent=4)
+        except FileNotFoundError:
+            print(f"Json.save: Unable to find Json file on path:\n    {path}")
+            return
