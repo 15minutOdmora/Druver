@@ -21,12 +21,17 @@ class Game:
 
         self.FPS = constants.FPS_CAP
         self.clock = pygame.time.Clock()
+        self._dt = 0  # Change of time between seconds
         self.paused = False  # If game is paused
 
         self.controller = Controller(self)
         self.window = Window(self)
         self.input = Input(self)
         self.development = Development(self)
+
+    @property
+    def dt(self):
+        return self._dt * 0.001
 
     def run(self) -> None:
         """
@@ -36,7 +41,7 @@ class Game:
         while running:
             self.window.update()
             running = self.input.update()
-            self.clock.tick()
+            self._dt = self.clock.tick()
 
 
 if __name__ == "__main__":

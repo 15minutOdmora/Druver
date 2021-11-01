@@ -23,6 +23,7 @@ class Development:
 
         self.add(self.__draw_fps)  # Add the draw fps method to items
         self.add(self.__draw_page_stack)
+        self.add(self.__draw_game_dt)
 
     def __get_fps(self):
         """
@@ -45,6 +46,11 @@ class Development:
         num_of_pages = f"Page stack:  {len(self.game.controller.page_stack)}"
         pages_surface = self.font.render(num_of_pages, True, (255, 255, 255))
         self.game.screen.blit(pages_surface, (20, 680))
+
+    def __draw_game_dt(self):
+        dt = f"Last time diff {self.game.dt}"
+        dt_surface = self.font.render(dt, True, (255, 255, 255))
+        self.game.screen.blit(dt_surface, (20, 660))
 
     def add(self, func: "function") -> None:
         """
