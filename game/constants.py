@@ -55,6 +55,7 @@ class Paths:
 
     # objects
     objects = join_paths(assets, "objects")
+    cars = join_paths(objects, "cars")
 
     # sounds
     sounds = join_paths(assets, "sounds")
