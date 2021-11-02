@@ -27,7 +27,7 @@ def rotate_vector(vector: list[int, int], angle: int):
 class Player:
     def __init__(self, game, map, car, name, initial_position=[0, 0]):
         self.game = game
-        self.screen = self.game.screen
+        self.screen = pygame.display.get_surface()
         self.controller = self.game.controller
         self.map = map
         self.car = car

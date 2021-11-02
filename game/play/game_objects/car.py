@@ -14,7 +14,7 @@ class Car:
     """@DynamicAttrs"""
     def __init__(self, game, name: str, initial_position=[0, 0]):
         self.game = game
-        self.screen = self.game.screen
+        self.screen = pygame.display.get_surface()
         self.controller = self.game.controller
         self.position = initial_position
 
