@@ -47,6 +47,7 @@ class Paths:
 
     # images
     images = join_paths(assets, "images")
+    backgrounds = join_paths(images, "backgrounds")
     logo = join_paths(images, "logo")
     DRUVER_BIG_LOGO = join_paths(logo, "druver_big_logo.png")
 

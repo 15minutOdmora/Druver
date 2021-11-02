@@ -197,5 +197,6 @@ class StaticItem:
 
     def draw(self):
         """ Used for drawing itself and every item attached to it. """
-        for item in self.items:
-            item.draw()
+        if self.visible:
+            for item in self.items:
+                item.draw()

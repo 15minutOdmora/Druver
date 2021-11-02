@@ -27,6 +27,8 @@ class Input:
         self.game = game
         self.controller = self.game.controller
 
+        self.escape_key_released = True  # Needed to know when it was released so game pause works correctly
+
         self.update()
 
     def update(self) -> bool:
@@ -49,9 +51,14 @@ class Input:
                 """elif event.key == pygame.K_r:
                     self.game.window.radio = not self.game.window.radio"""
                 if event.key == pygame.K_ESCAPE:
-                    self.controller.esc_clicked = True
-            else:
-                self.controller.esc_clicked = False
+                    if self.escape_key_released:
+                        self.game.paused = not self.game.paused
+                        self.escape_key_released = False
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_ESCAPE:
+                    self.escape_key_released = True
+
+
             # Quit event
             if event.type == pygame.QUIT:
                 pygame.quit()
