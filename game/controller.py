@@ -34,8 +34,20 @@ class Controller:
         self.current_page = WelcomePage
 
     @property
+    def dt(self):
+        return self.game.dt
+
+    @property
+    def paused(self):
+        return self.game.paused
+
+    @property
     def current_page(self):
         return self.page_stack.peak()
+
+    @property
+    def development(self):
+        return self.game.development
 
     @current_page.setter
     def current_page(self, page):
@@ -61,3 +73,9 @@ class Controller:
             self.page_stack.pop()
         else:
             print(f"Controller: Redirection error calling go_back.\n   Page stack is empty.")
+
+    def pause_game(self) -> None:
+        """
+        Method pauses or un-pauses game once called base on the current state.
+        """
+        self.game.paused = not self.game.paused
