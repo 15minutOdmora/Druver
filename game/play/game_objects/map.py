@@ -58,14 +58,13 @@ class Map:
         map_size: Size of map in px
         offset: Offset to move map (based on player)
     """
-    def __init__(self, game, folder_name):
+    def __init__(self, controller, folder_name):
         """
         :param game: Current game object
         :param folder_name: Name of map folder saved in assets/maps/
         """
-        self.game = game
-        self.controller = self.game.controller
-        self.screen = self.game.screen
+        self.controller = controller
+        self.screen = pygame.display.get_surface()
         self.screen_size = SCREEN_SIZE
         self.half_screen_width, self.half_screen_height = SCREEN_SIZE[0] // 2, SCREEN_SIZE[1] // 2
         self.folder_name = folder_name

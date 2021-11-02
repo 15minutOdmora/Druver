@@ -12,10 +12,9 @@ from game.helpers.file_handling import ImageLoader, Json
 
 class Car:
     """@DynamicAttrs"""
-    def __init__(self, game, name: str, initial_position=[0, 0]):
-        self.game = game
-        self.screen = self.game.screen
-        self.controller = self.game.controller
+    def __init__(self, controller, name: str, initial_position=[0, 0]):
+        self.screen = pygame.display.get_surface()
+        self.controller = controller
         self.position = initial_position
 
         # Load car data
@@ -44,11 +43,11 @@ class Car:
         for key, value in self.config.items():
             setattr(self, key, value)
 
-        self.game.development.add(self.__draw_data)
+        self.controller.development.add(self.__draw_data)
 
     @property
     def dt(self):
-        return self.game.dt
+        return self.controller.dt
 
     def update_throttle(self):
         self.throttle = min(1, self.throttle)
@@ -92,21 +91,21 @@ class Car:
     def __draw_data(self):
         # Car
         car = f"Car"
-        car_surface = self.game.development.font.render(car, True, (255, 255, 255))
-        self.game.screen.blit(car_surface, (20, 300))
+        car_surface = self.controller.development.font.render(car, True, (255, 255, 255))
+        self.screen.blit(car_surface, (20, 300))
         # Throttle
         thr = f"Throttle: {self.throttle}, Brake: {self.brake_throttle}"
-        thr_surface = self.game.development.font.render(thr, True, (255, 255, 255))
-        self.game.screen.blit(thr_surface, (30, 320))
+        thr_surface = self.controller.development.font.render(thr, True, (255, 255, 255))
+        self.screen.blit(thr_surface, (30, 320))
         # Velocity
         vel = f"Velocity: {self.velocity}"
-        vel_surface = self.game.development.font.render(vel, True, (255, 255, 255))
-        self.game.screen.blit(vel_surface, (30, 340))
+        vel_surface = self.controller.development.font.render(vel, True, (255, 255, 255))
+        self.screen.blit(vel_surface, (30, 340))
         # Acceleration
         acc = f"Acceleration: {self.acceleration}"
-        acc_surface = self.game.development.font.render(acc, True, (255, 255, 255))
-        self.game.screen.blit(acc_surface, (30, 360))
+        acc_surface = self.controller.development.font.render(acc, True, (255, 255, 255))
+        self.screen.blit(acc_surface, (30, 360))
         # Steering
         ster = f"Steering angle: {self.steering_angle}"
-        ster_surface = self.game.development.font.render(ster, True, (255, 255, 255))
-        self.game.screen.blit(ster_surface, (30, 380))
+        ster_surface = self.controller.development.font.render(ster, True, (255, 255, 255))
+        self.screen.blit(ster_surface, (30, 380))

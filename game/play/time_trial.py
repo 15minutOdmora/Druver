@@ -11,19 +11,18 @@ class TimeTrial:
     """ Time trial class, similar to a page, as it has the draw and update methods, but has own logic."""
     def __init__(self, controller):
         self.controller = controller
-        self.game = self.controller.game
 
         # Load map
         self.map = Map(
-            game=self.game,
+            self.controller,
             folder_name="testing_map"
         )
         # Load player
-        self.car = Car(self.game, "vasjacar")
-        self.player = Player(self.game, self.map, self.car, "Testing")
+        self.car = Car(self.controller, "vasjacar")
+        self.player = Player(self.controller, self.map, self.car, "Testing")
 
     def update(self):
-        if not self.game.paused:
+        if not self.controller.paused:
             self.player.update()
             self.map.update()
 
