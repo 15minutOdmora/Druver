@@ -3,6 +3,7 @@ Module containing different maps.
 """
 from __future__ import annotations
 import math
+import time
 
 import pygame
 
@@ -25,7 +26,7 @@ class Tile:
     """
     Tile class for representing a single tile on map.
     """
-    def __init__(self, screen: "Display", image: "Image", position: list[int, int], size: list[int, int]):
+    def __init__(self, screen: "Display", image: "Image", mask_image: "Image", position: list[int, int], size: list[int, int]):
         """
         :param screen: Currently opened display
         :param image: Image, used as ground
@@ -34,6 +35,7 @@ class Tile:
         """
         self.screen = screen
         self.image = image
+        self.mask_image = mask_image
         self.position = position
         self.size = size
 
@@ -70,6 +72,7 @@ class Map:
         self.folder_name = folder_name
         # These get set by the load_tiles method
         self.tiles: list[list] = None
+        self.mask_tiles: list[list] = None
         self.tile_size = None
         self.number_of_tiles = None
         self.map_size = None
@@ -83,10 +86,12 @@ class Map:
         """
         Method loads tiles into the tiles list grid.
         """
+        start_time = time.time()
         folder_path = join_paths(Paths.maps, self.folder_name)
         ground_folder_path = join_paths(folder_path, "ground")
-        # TODO: Implement for mask, update for different sized tiles
+        mask_folder_path = join_paths(folder_path, "mask")
         ground_images = ImageLoader.load_tiles_from_folder(ground_folder_path)  # Loads every image in a grid
+        mask_images = ImageLoader.load_tiles_from_folder(mask_folder_path)
         self.tiles = []
         self.tile_size = ground_images[0][0].get_size()  # Get size of one image
         current_position = [0, 0]
@@ -95,12 +100,14 @@ class Map:
             current_position[0] = 0
             for j in range(len(ground_images[i])):
                 image = ground_images[i][j]
+                mask_image = ground_images[i][j]
                 # Initializing Tile position by passing current_position, does not work as the initialized position
                 # takes the last assigned value of current_position.
                 self.tiles[i].append(
                     Tile(
                         self.screen,
                         image,
+                        mask_image,
                         [current_position[0], current_position[1]],
                         self.tile_size
                     )
@@ -109,6 +116,7 @@ class Map:
             current_position[1] += self.tile_size[1]
         self.map_size = (current_position[0], current_position[1])
         self.number_of_tiles = [len(self.tiles), len(self.tiles[0])]
+        print(f"Map loading took: {time.time() - start_time}s")
 
     def update_visible_tiles_indexes(self) -> None:
         """
