@@ -21,10 +21,10 @@ class TimeTrial:
         # Load map
         self.map = Map(
             self.controller,
-            folder_name="testing_map"
+            folder_name="Mugello Dessert"
         )
         # Load player
-        self.car = Car(self.controller, "vasjacar")
+        self.car = Car(self.controller, "FastBoi")
         self.player = Player(self.controller, self.map, self.car, "Testing")
 
     def update(self):
