@@ -28,6 +28,7 @@ class Item:
 
         self.items: list[ActiveItem] = []  # List of items attached to self
 
+        self.initial_position = position  # Save initial position
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
 
         self.hovered = False
@@ -85,6 +86,12 @@ class Item:
     def height(self, new_height: int) -> None:
         self.rect.height = new_height
 
+    def reset_position(self) -> None:
+        """
+        Method resets items position to its initial one.
+        """
+        self.position = self.initial_position
+
     def on_hover(self):
         # When mouse hovers item
         pass
@@ -129,6 +136,7 @@ class StaticItem:
 
         self.items = []
 
+        self.initial_position = position
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
 
         self.visible = visible
@@ -182,6 +190,12 @@ class StaticItem:
     @height.setter
     def height(self, new_height: int) -> None:
         self.rect.height = new_height
+
+    def reset_position(self) -> None:
+        """
+        Method resets items position to its initial one.
+        """
+        self.position = self.initial_position
 
     def add_item(self, item: any, *args) -> None:
         """

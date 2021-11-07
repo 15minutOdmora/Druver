@@ -19,19 +19,49 @@ class Controller:
     def __init__(self, game):
         self.game = game
 
-        self.mouse_position: tuple[int, int] = (0, 0)
-        self.mouse_clicked: bool = False
+        # Save as two consecutive mouse positions / clicks, accessible through properties
+        self.mouse_position: list[tuple[int, int]] = (0, 0)
+        self._mouse_pressed: bool = [False, False]
+        self.mouse_clicked = False
+        self.mouse_movement = (0, 0)
+        self.mouse_scroll = 0  # Wheel on the mouse, 1 if up -1 if down roll
         self.esc_clicked: bool = False
         self.key_pressed: dict = {}
 
         self.pages = {
             "WelcomePage": WelcomePage,
             "StartGamePage": StartGamePage,
-            "TimeTrial": TimeTrial
+            "TimeTrial": TimeTrial,
+            "SelectionPage": SelectionPage
         }
         self.page_stack = Stack()
 
         self.current_page = WelcomePage
+
+    @property
+    def mouse_pressed(self) -> bool:
+        """
+        Property returns if mouse was clicked on current game frame.
+        :return: If clicked or not
+        """
+        return self._mouse_pressed[-1]  # Last click
+
+    @mouse_pressed.setter
+    def mouse_pressed(self, clicked: bool) -> None:
+        """
+        Property setter sets the last click on mouse.
+        :param clicked: If clicked or not
+        """
+        self._mouse_pressed.append(clicked)
+        self._mouse_pressed = self._mouse_pressed[-2:]  # Save as only the last 2 recent clicks
+
+    @property
+    def previous_mouse_pressed(self) -> bool:
+        """
+        Returns if mouse was clicked on the previous frame.
+        :return: If clicked or not
+        """
+        return self._mouse_pressed[0]  # Left one is previous one as we add clicks on the end
 
     @property
     def dt(self):
