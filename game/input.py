@@ -36,14 +36,15 @@ class Input:
         Method checks and updates the currently clicked pressed down buttons.
         :return: bool -> False if game was quit, True otherwise
         """
-        self.controller.mouse_position = pygame.mouse.get_pos()
-        self.controller.key_pressed = get_key_pressed_dict(pygame.key.get_pressed())
         for event in pygame.event.get():
             # Mouse events
             if event.type == pygame.MOUSEBUTTONDOWN:
-                self.controller.mouse_clicked = True
+                if event.button == 1:
+                    self.controller.mouse_clicked = True
             else:
                 self.controller.mouse_clicked = False
+            if event.type == pygame.MOUSEWHEEL:
+                self.controller.mouse_scroll = event.y  # This attribute has to be reset outside this event loop
             if event.type == pygame.KEYDOWN:
                 # Todo: Implement menus buttons selection with keyboard
                 if event.key == pygame.K_d:  # This will enable development display
@@ -57,11 +58,14 @@ class Input:
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_ESCAPE:
                     self.escape_key_released = True
-
-
             # Quit event
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return False
-
+        # We do this at the end as mouse.get_pressed might not as expected if called before pygame.event.get()
+        self.controller.mouse_position = pygame.mouse.get_pos()
+        key_pressed = get_key_pressed_dict(pygame.key.get_pressed())
+        self.controller.key_pressed = key_pressed
+        self.controller.mouse_pressed = key_pressed["mouse"]["left"]
+        self.controller.mouse_movement = pygame.mouse.get_rel()  # Movement of mouse on two consecutive calls
         return True

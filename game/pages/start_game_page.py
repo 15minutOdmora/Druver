@@ -59,7 +59,7 @@ class StartGamePage(Page):
                 text="Time Trial",
                 size=36
             ),
-            on_click=helpers.create_callable(self.controller.redirect_to_page, "TimeTrial")
+            on_click=helpers.create_callable(self.controller.redirect_to_page, "SelectionPage")
         )
         self.grid.add_item(
             row=3,
@@ -84,5 +84,3 @@ class StartGamePage(Page):
         )
         # Add grid to page
         self.add_item(self.grid)
-
-
