@@ -100,6 +100,11 @@ class ScrollablePage:
         self.current_height = 0  # y - pos of current upper left corner of screen on this long page
         self.scroll_move_by_wheel_input = 50  # Movement of one input from mouse wheel
 
+        self.is_scrolling = False
+        self.scroll_to_height = 0
+        self.scroll_direction = 0
+        self.scroll_speed = 12
+
     @property
     def height(self) -> int:
         """
@@ -117,13 +122,50 @@ class ScrollablePage:
         self.current_height = min(self.height - self.screen_size[1], max(0, self.current_height + change))
         self.controller.mouse_scroll = 0  # TODO this has to be reset to 0 here
 
+    def scroll_to(self, index: int) -> None:
+        """
+        Method scrolls to page on given index.
+        Note: If page is currently scrolling down, method call has no effect.
+        :param index: Index of page in list to scroll to.
+        """
+        if index > len(self.pages) - 1:
+            raise ValueError(f"ScrollablePage.scroll_to: Index {index} is out of range.")
+        elif self.is_scrolling:  # If already scrolling => to_height was already set
+            return
+        else:
+            self.scroll_to_height = self.pages_positions[index][1]  # Get height of page
+            self.scroll_direction = math.copysign(1, self.scroll_to_height - self.current_height)
+            self.is_scrolling = True
+
+    def scroll_one_down(self) -> None:
+        """
+        Method scrolls one page down.
+        """
+        # Get current page index
+        current_index = self.currently_visible_pages[0]  # We know it is the first one
+        if current_index >= len(self.pages) - 1:
+            self.scroll_to(current_index)
+        else:
+            self.scroll_to(current_index + 1)
+
+    def scroll_one_up(self) -> None:
+        """
+        Method scrolls one page up.
+        """
+        # Get current page index
+        current_index = self.currently_visible_pages[0]  # We know it's the first index
+        if current_index <= 1:
+            self.scroll_to(0)
+        else:
+            self.scroll_to(current_index - 1)
+
     def get_visible_pages(self) -> list[int, int]:
         """
         Method returns a list of currently visible pages on screen.
         If current_height = 0 -> returns [0, 1], always adds the page underneath.
         :return: List of indexes of pages in the self.pages list
         """
-        current = self.current_height // self.screen_size[1]  # Current page the current_height is on
+        current = int(self.current_height // self.screen_size[1])  # Current page the current_height is on
         visible = [current]
         if current < len(self.pages) - 1:  # If there is more pages append next index as it is probably visible
             visible.append(current + 1)
@@ -148,11 +190,16 @@ class ScrollablePage:
         """
         Method checks if mouse was clicked and moves the page in that direction.
         """
-        if self.controller.mouse_pressed and self.controller.previous_mouse_pressed:
-            if self.controller.mouse_movement[1] != 0:
-                self.scroll(-self.controller.mouse_movement[1])  # Only pass change in opposite y direction
         if self.controller.mouse_scroll != 0:
             self.scroll(-self.controller.mouse_scroll * self.scroll_move_by_wheel_input)
+        if self.is_scrolling:
+            change_left = self.scroll_to_height - self.current_height
+            if change_left == 0:  # If product has - sign, we reached goal height
+                self.is_scrolling = False
+            elif abs(change_left) < self.scroll_speed:
+                self.scroll(self.scroll_direction * change_left)
+            else:
+                self.scroll(self.scroll_direction * self.scroll_speed)
 
     def update(self) -> None:
         """
