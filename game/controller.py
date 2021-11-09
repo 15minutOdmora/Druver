@@ -16,7 +16,14 @@ from game.play.time_trial import TimeTrial
 
 
 class Controller:
+    """
+    Main object throughout the game. Mediator between game object and everything else.
+    Contains page_stack attribute which is a Stack, containing visited pages.
+    """
     def __init__(self, game):
+        """
+        :param game: Game object
+        """
         self.game = game
 
         # Save as two consecutive mouse positions / clicks, accessible through properties
@@ -65,23 +72,43 @@ class Controller:
 
     @property
     def dt(self):
+        """
+        Property for time difference between two last frames.
+        :return: float
+        """
         return self.game.dt
 
     @property
     def paused(self):
+        """
+        Property for if game is currently paused.
+        :return: bool
+        """
         return self.game.paused
 
     @property
     def current_page(self):
+        """
+        Property returns the top page on page_stack.
+        :return: Page or ScrollablePage
+        """
         return self.page_stack.peak()
-
-    @property
-    def development(self):
-        return self.game.development
 
     @current_page.setter
     def current_page(self, page):
+        """
+        Property setter for the current page
+        :param page: Page
+        """
         self.page_stack.push(page(self))  # Initialize page
+
+    @property
+    def development(self):
+        """
+        Property for the game development object
+        :return: Development
+        """
+        return self.game.development
 
     def redirect_to_page(self, to_page: str) -> None:
         """
@@ -97,7 +124,7 @@ class Controller:
     def go_back(self) -> None:
         """
         Method goes back one page in the page stack.
-        I f page stack is empty => error gets displayed.
+        If page stack is empty => error gets raised.
         """
         if not self.page_stack.empty():
             self.page_stack.pop()
@@ -106,6 +133,6 @@ class Controller:
 
     def pause_game(self) -> None:
         """
-        Method pauses or un-pauses game once called base on the current state.
+        Method for pausing and un-pausing game.
         """
         self.game.paused = not self.game.paused
