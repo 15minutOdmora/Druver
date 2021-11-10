@@ -32,10 +32,12 @@ class Item:
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
 
         self.hovered = False
-        self.visible = True
+        self.visible = False
         self.selected: bool = False
 
         self._on_click: Callable = on_click
+        self.last_click_time = 0  # Time of last click
+        self.debounce_interval = 100  # Minimum milliseconds passed since last click to accept next click
 
     @property
     def position(self) -> list[int]:
@@ -86,6 +88,14 @@ class Item:
     def height(self, new_height: int) -> None:
         self.rect.height = new_height
 
+    def debounce_time(self) -> bool:
+        """
+        Method checks if enough(debounce_interval) time passed from the time of the last click.
+        Used for eliminating double clicks.
+        :return: bool if enough time passed or not
+        """
+        return pygame.time.get_ticks() - self.last_click_time >= self.debounce_interval
+
     def reset_position(self) -> None:
         """
         Method resets items position to its initial one.
@@ -103,7 +113,8 @@ class Item:
     def update(self):
         """ Used for updating all items attached to it(sizes, positions, etc.). """
         self.hovered = self.rect.collidepoint(self.controller.mouse_position)
-        if self.hovered and self.controller.mouse_clicked:
+        if self.hovered and self.controller.mouse_clicked and self.debounce_time():
+            self.last_click_time = pygame.time.get_ticks()
             self.on_click()
         for item in self.items:
             item.update()
@@ -125,7 +136,7 @@ class StaticItem:
     def __init__(self,
                  position=[0, 0],
                  size=(1, 1),
-                 visible: bool = False
+                 visible: bool = True
                  ):
         """
         :param position: list[int] -> Position of item on screen

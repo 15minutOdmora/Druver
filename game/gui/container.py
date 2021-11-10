@@ -23,7 +23,7 @@ class Container(StaticItem):
 
     def add_item(self, item: any, relative_position: tuple[int]) -> int:
         """
-        Method adds item to self, on given position. Returns items positon index in lists.
+        Method adds item to self, on given position. Returns items position index in lists.
         """
         self.items.append(item)
         item_position = (self.position[0] + relative_position[0], self.position[1] + relative_position[1])
@@ -47,7 +47,8 @@ class Container(StaticItem):
         Updates all items positions. TODO: Items positions get assigned every time.
         """
         for i, item in enumerate(self.items):
-            item.position = self.items_positions[i]
+            # Update items positions relative to current self position
+            item.position = [self.x + self.items_positions[i][0], self.y + self.items_positions[i][1]]
             item.update()
 
     def draw(self):
