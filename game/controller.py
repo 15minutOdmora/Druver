@@ -1,7 +1,7 @@
 """
 Module containing the controller class.
 
-Controller class object acts as an intermediate between game wide objects, ex. page redirection, ...
+Controller class object acts as an intermediate between game wide objects, used for page redirection, game pausing, ...
 """
 
 from typing import Callable

@@ -91,7 +91,7 @@ class AnimatedButton(Item):
                  folder_path: str,
                  position: list[int] = [0, 0],
                  on_click: Callable = lambda: None,
-                 animation_speed = 1,
+                 animation_speed=1,
                  ):
         # Initialize image lists and indexes(current displayed images)
         self.normal_images, self.on_click_images, self.on_hover_images = [], [], []
