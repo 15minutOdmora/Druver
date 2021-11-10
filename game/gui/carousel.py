@@ -19,6 +19,8 @@ class HorizontalCarousel(Item):
             ):
         super().__init__(controller, position, size)
         self.item_size = item_size
+        # Centre position of item in self, subtract item size so item is centered
+        self.center_position = [self.size[0] // 2 - item_size[0] // 2, 0]
 
         self.current_index = 0
         self.items_positions = []  # Relative position of items to self
@@ -42,7 +44,8 @@ class HorizontalCarousel(Item):
         Items get added as containers as containers are easy to move.
         :param item: Container object
         """
-        x_pos = self.x + (self.item_size[0] * len(self.items))  # Items get added one next to the other
+        # Items get added one next to the other, first item is in the center of the carousel
+        x_pos = self.position[0] + self.center_position[0] + (self.item_size[0] * len(self.items))
         self.items_positions.append([x_pos, self.y])
         self.items.append(item)
 
@@ -51,7 +54,7 @@ class HorizontalCarousel(Item):
         Overwrite parent method.
         """
         for i, item in enumerate(self.items):
-            item.position = [self.items_positions[i][0], self.y]
+            item.position = [self.items_positions[i][0] - self.current_index * self.item_size[0], self.y]
             item.update()
 
     def draw(self) -> None:

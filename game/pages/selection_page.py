@@ -7,7 +7,7 @@ import pygame
 from game.helpers import helpers
 from game.pages.page import ScrollablePage, Page
 from game.constants import Paths, DEVELOPMENT_URL
-from game.gui.text import CustomText
+from game.gui.text import CustomText, Text
 from game.gui.button import Button
 from game.gui.image import StaticImage
 from game.gui.grid import Grid
@@ -39,6 +39,14 @@ class PlayerSelectionPage(Page):
                 position=[0, 0],
                 size=[200, 300],
                 visible=True
+            )
+            cont.add_item(
+                item=Text(text=str(i), size=20),
+                relative_position=[50, 50]
+            )
+            cont.add_item(
+                item=Text(text=str(i), size=20),
+                relative_position=[50, 100]
             )
             self.carousel.add_item(cont)
         self.add_item(self.carousel)

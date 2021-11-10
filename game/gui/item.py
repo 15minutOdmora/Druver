@@ -32,7 +32,7 @@ class Item:
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
 
         self.hovered = False
-        self.visible = True
+        self.visible = False
         self.selected: bool = False
 
         self._on_click: Callable = on_click
@@ -115,7 +115,6 @@ class Item:
         self.hovered = self.rect.collidepoint(self.controller.mouse_position)
         if self.hovered and self.controller.mouse_clicked and self.debounce_time():
             self.last_click_time = pygame.time.get_ticks()
-            print("click")
             self.on_click()
         for item in self.items:
             item.update()
@@ -137,7 +136,7 @@ class StaticItem:
     def __init__(self,
                  position=[0, 0],
                  size=(1, 1),
-                 visible: bool = False
+                 visible: bool = True
                  ):
         """
         :param position: list[int] -> Position of item on screen
