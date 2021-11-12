@@ -30,26 +30,27 @@ class PlayerSelectionPage(Page):
         # Carousel
         self.carousel = HorizontalCarousel(
             self.controller,
-            item_size=[200, 300],
-            position=[100, 200],
-            size=[1000, 300],
+            item_size=[300, 500],
+            position=[0, 50],
+            size=[1280, 400],
             spacing=30
         )
-        self.carousel.visible = True
-        for i in range(4):
+        self.carousel.visible = False
+        for i in range(8):
             cont = Container(
                 position=[0, 0],
-                size=[200, 300],
-                visible=True
+                size=[300, 500],
+                visible=True,
+                resizable=True
             )
             cont.add_item(
-                item=Text(text=str(i), size=20),
+                item=CustomText(text=str(i), size=50),
                 relative_position=[50, 50]
             )
-            cont.add_item(
+            """cont.add_item(
                 item=Text(text=str(i), size=20),
                 relative_position=[50, 100]
-            )
+            )"""
             self.carousel.add_item(cont)
         self.add_item(self.carousel)
 

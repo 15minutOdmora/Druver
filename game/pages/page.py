@@ -230,7 +230,7 @@ class ScrollablePage:
         """
         if self.is_scrolling:  # If scrolling by action of a button
             change_left = self.scroll_to_height - self.current_height
-            if change_left == 0:  # If product has (-) sign, we reached goal height
+            if change_left == 0:
                 self.is_scrolling = False
             elif abs(change_left) < self.scroll_speed:
                 self.scroll(self.scroll_direction * change_left)
