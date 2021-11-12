@@ -20,8 +20,9 @@ class Button(Item):
                  on_click: Callable = lambda: None,
                  text: str = "",
                  fill_color: tuple[int] = BaseColors.button_fill,
-                 border_color: tuple[int] = BaseColors.button_outline) -> object:
-        super().__init__(controller, position, size, on_click)
+                 border_color: tuple[int] = BaseColors.button_outline,
+                 movable: bool = False) -> object:
+        super().__init__(controller, position, size, on_click, movable)
 
         self.screen = pygame.display.get_surface()
         self.controller = controller
@@ -91,6 +92,7 @@ class AnimatedButton(Item):
                  folder_path: str,
                  position: list[int] = [0, 0],
                  on_click: Callable = lambda: None,
+                 movable: bool = False,
                  animation_speed=1,
                  ):
         # Initialize image lists and indexes(current displayed images)
@@ -113,7 +115,7 @@ class AnimatedButton(Item):
         self.was_clicked = False
         self.animation_speed = animation_speed
 
-        super().__init__(controller, position, size, on_click)
+        super().__init__(controller, position, size, on_click, movable=movable)
 
     def update(self):
         """ Overwrite items update method. """

@@ -15,12 +15,14 @@ class Item:
                  controller,
                  position=[0, 0],
                  size=(1, 1),
-                 on_click: Callable = lambda: None
+                 on_click: Callable = lambda: None,
+                 movable: bool = False
                  ):
         """
         :param position: list[int] -> Position of item on screen
         :param size: tuple[int] -> Size of item
         :param on_click: Callable -> Function to call when item is clicked
+        :param movable: bool -> If item can be moved, mouse click is processed differently
         """
         self.screen = pygame.display.get_surface()
 
@@ -38,6 +40,17 @@ class Item:
         self._on_click: Callable = on_click
         self.last_click_time = 0  # Time of last click
         self.debounce_interval = 100  # Minimum milliseconds passed since last click to accept next click
+
+        # Assign mouse clicked different function, if true -> mouse_clicked() returns true if mouse is pressed
+        #                                             else -> mouse_clicked() returns true if mouse clicked
+        # Mouse clicked has to be a function so it returns the pointer to the object and not its value
+        if movable:
+            self.mouse_clicked = lambda: self.controller.mouse_pressed
+            self.debounce_interval = 0
+        else:
+            self.mouse_clicked = lambda: self.controller.mouse_clicked
+        # Was pressed property used for checking if mouse was pressed on item initially and is still being pressed
+        self.was_pressed = False
 
     @property
     def position(self) -> list[int]:
@@ -108,14 +121,23 @@ class Item:
 
     def on_click(self):
         # When mouse clicks on item
+        self.last_click_time = pygame.time.get_ticks()
         self._on_click()
 
     def update(self):
         """ Used for updating all items attached to it(sizes, positions, etc.). """
         self.hovered = self.rect.collidepoint(self.controller.mouse_position)
-        if self.hovered and self.controller.mouse_clicked and self.debounce_time():
-            self.last_click_time = pygame.time.get_ticks()
+        # Check if mouse was clicked on item, in the interval of the debounce time
+        if self.hovered and self.mouse_clicked() and self.debounce_time():
             self.on_click()
+            self.was_pressed = True
+        # Mouse was released
+        elif not self.mouse_clicked():
+            self.was_pressed = False
+        # If was pressed and mouse is not on the item anymore still call on_click method works if movable = True
+        if self.was_pressed:
+            self.on_click()
+        # Update all items
         for item in self.items:
             item.update()
 
