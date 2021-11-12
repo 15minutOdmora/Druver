@@ -6,6 +6,9 @@ import math
 
 import pygame
 
+from game.gui.button import Button
+from game.helpers.helpers import create_callable
+
 
 class Page:
     def __init__(self, controller):
@@ -104,6 +107,15 @@ class ScrollablePage:
         self.scroll_to_height = 0
         self.scroll_direction = 0
         self.scroll_speed = 12
+        # Create movable scrolling button as
+        self.scrolling_button = Button(
+            self.controller,
+            position=[self.screen_size[0] - 20, 0],
+            size=[16, 100],
+            on_click=create_callable(self.move_scrolling_button),
+            movable=True
+        )
+        self.add_item(self.scrolling_button)
 
     @property
     def height(self) -> int:
@@ -113,6 +125,14 @@ class ScrollablePage:
         """
         return len(self.pages) * self.screen_size[1]  # Height of one screen is the same as one pages height
 
+    @property
+    def number_of_pages(self) -> int:
+        """
+        Property returns the amount of pages attached to self.
+        :return: Integer number of pages
+        """
+        return len(self.pages)
+
     def scroll(self, change: int) -> None:
         """
         Method scrolls the page up(+int) or down(-int) for an amount of pixels.
@@ -121,6 +141,7 @@ class ScrollablePage:
         # Boundaries of current_height are [0, height - screen_height] as it determines the upper left corner
         self.current_height = min(self.height - self.screen_size[1], max(0, self.current_height + change))
         self.controller.mouse_scroll = 0  # TODO this has to be reset to 0 here
+        self.scrolling_button.y = int(self.current_height // self.number_of_pages)
 
     def scroll_to(self, index: int) -> None:
         """
@@ -171,6 +192,21 @@ class ScrollablePage:
             visible.append(current + 1)
         return visible
 
+    def move_scrolling_button(self) -> None:
+        """
+        Method gets converted into callable for on_click function in scrolling_button.
+        Method updates scrolling buttons position on screen based on change of mouse movement.
+        """
+        change = self.controller.mouse_movement[1]
+        self.scrolling_button.y = min(max(self.scrolling_button.y + change, 0),
+                                      self.screen_size[1] - self.scrolling_button.height)
+
+    def update_scrolling_button_data(self) -> None:
+        """
+        Method updates current page height based on scrolling_button height.
+        """
+        self.current_height = self.number_of_pages * self.scrolling_button.y
+
     def add_page(self, page: Page) -> None:
         """
         Method adds page to self, it gets added at the bottom of all current pages.
@@ -178,6 +214,8 @@ class ScrollablePage:
         """
         self.pages_positions.append([0, self.height])  # Add page at current height
         self.pages.append(page)
+        # Update scrolling buttons height based on number of pages
+        self.scrolling_button.height = int(self.screen_size[1] // len(self.pages))
 
     def add_item(self, item: any) -> None:
         """
@@ -190,16 +228,18 @@ class ScrollablePage:
         """
         Method checks if mouse was clicked and moves the page in that direction.
         """
-        if self.controller.mouse_scroll != 0:
-            self.scroll(-self.controller.mouse_scroll * self.scroll_move_by_wheel_input)
-        if self.is_scrolling:
+        if self.is_scrolling:  # If scrolling by action of a button
             change_left = self.scroll_to_height - self.current_height
-            if change_left == 0:  # If product has - sign, we reached goal height
+            if change_left == 0:  # If product has (-) sign, we reached goal height
                 self.is_scrolling = False
             elif abs(change_left) < self.scroll_speed:
                 self.scroll(self.scroll_direction * change_left)
             else:
                 self.scroll(self.scroll_direction * self.scroll_speed)
+        elif self.controller.mouse_scroll != 0:  # If scrolling with roller
+            self.scroll(-self.controller.mouse_scroll * self.scroll_move_by_wheel_input)
+        else:
+            self.update_scrolling_button_data()
 
     def update(self) -> None:
         """
