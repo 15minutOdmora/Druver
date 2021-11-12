@@ -15,7 +15,6 @@ class Container(StaticItem):
     """
     Base abstract class for defining Items. This includes the needed methods / attributes.
     """
-
     def __init__(self, position: list[int] = [0, 0], size: tuple[int] = (100, 100), visible: bool = False):
         super().__init__(position, size, visible)
 

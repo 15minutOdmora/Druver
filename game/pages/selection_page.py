@@ -32,8 +32,10 @@ class PlayerSelectionPage(Page):
             self.controller,
             item_size=[200, 300],
             position=[100, 200],
-            size=[1000, 300]
+            size=[1000, 300],
+            spacing=30
         )
+        self.carousel.visible = True
         for i in range(4):
             cont = Container(
                 position=[0, 0],

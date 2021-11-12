@@ -16,11 +16,14 @@ class HorizontalCarousel(Item):
             item_size: list[int, int],
             position: list[int, int] = [0, 0],
             size: list[int, int] = [1, 1],
+            spacing: int = 0
             ):
         super().__init__(controller, position, size)
         self.item_size = item_size
         # Centre position of item in self, subtract item size so item is centered
         self.center_position = [self.size[0] // 2 - item_size[0] // 2, 0]
+
+        self.spacing = spacing  # Spacing between items
 
         self.current_index = 0
         self.items_positions = []  # Relative position of items to self
@@ -45,7 +48,7 @@ class HorizontalCarousel(Item):
         :param item: Container object
         """
         # Items get added one next to the other, first item is in the center of the carousel
-        x_pos = self.position[0] + self.center_position[0] + (self.item_size[0] * len(self.items))
+        x_pos = self.position[0] + self.center_position[0] + ((self.item_size[0] + self.spacing) * len(self.items))
         self.items_positions.append([x_pos, self.y])
         self.items.append(item)
 
