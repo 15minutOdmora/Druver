@@ -122,6 +122,7 @@ class Item:
 
     def on_click(self):
         # When mouse clicks on item
+        self.last_click_time = pygame.time.get_ticks()
         self._on_click()
 
     def update(self):
@@ -129,7 +130,6 @@ class Item:
         self.hovered = self.rect.collidepoint(self.controller.mouse_position)
         # Check if mouse was clicked on item, in the interval of the debounce time
         if self.hovered and self.mouse_clicked() and self.debounce_time():
-            self.last_click_time = pygame.time.get_ticks()
             self.on_click()
             self.was_pressed = True
         # Mouse was released
@@ -137,7 +137,6 @@ class Item:
             self.was_pressed = False
         # If was pressed and mouse is not on the item anymore still call on_click method works if movable = True
         if self.was_pressed and self.movable:  # Only check if item is movable, otherwise get multiple clicks
-            self.last_click_time = pygame.time.get_ticks()
             self.on_click()
         # Update all items
         for item in self.items:
