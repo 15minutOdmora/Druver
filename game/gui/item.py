@@ -248,3 +248,52 @@ class StaticItem:
         if self.visible:
             for item in self.items:
                 item.draw()
+
+
+class ResizableItem(StaticItem):
+    """
+    This class inherits from StaticItem class.
+    Base class for defining static items that do not have actions performed on them.
+    The main difference between the Item class is that it can be resized, the lack of on_hover / on_click methods
+    and that this class does not need the controller to be passed.
+    Items can not be attached to this class.
+    """
+    def __init__(self,
+                 position: list[int, int] = [0, 0],
+                 size: tuple[int, int] = (1, 1),
+                 visible: bool = True
+                 ):
+        """
+        :param position: list[int, int] position of item on screen
+        :param size: tuple[int, int] size of item
+        :param visible: bool if item should be displayed
+        """
+        super().__init__(position, size, visible)
+        # These get modified inside this class
+        self.initial_size = self.size
+        self.is_resized = False
+        self.moved_position = [0, 0]
+        self.resized_factor = 1
+        # These should be modified by the child class
+        self.resized_size = self.size
+        self.resized = None
+
+    def resize(self, factor: float) -> None:
+        """
+        Method will re-size item based on a factor passed as argument. If class gets inherited method should first get
+        called with super function.
+        :param factor: float factor to scale item
+        """
+        self.resized_factor = factor
+        dx = int((self.width - (self.width * factor)) // 2)
+        dy = int((self.height - (self.height * factor)) // 2)
+        self.moved_position = [dx, dy]
+        self.resized_size = [int(self.width * factor), int(self.height * factor)]
+        self.is_resized = True
+
+    def reset_size(self) -> None:
+        """
+        Method will reset its size to the initially set one.
+        """
+        self.moved_position = [0, 0]
+        self.is_resized = False
