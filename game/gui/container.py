@@ -36,20 +36,6 @@ class Container(ResizableItem):
         self.items_positions: list[tuple] = []  # List containing attached items positions
         self.resized_items_positions: list[tuple] = []
 
-    @property
-    def scaled_x(self):
-        """
-        Property returns scaled x position when container is re-sized.
-        """
-        return self.x + self.moved_position[0]
-
-    @property
-    def scaled_y(self):
-        """
-        Property returns scaled y position when container is re-sized.
-        """
-        return self.x + self.moved_position[1]
-
     def resize(self, factor: float) -> None:
         """
         Method re-sizes self and every item inside by a factor passed as an argument.
@@ -74,7 +60,6 @@ class Container(ResizableItem):
     def add_item(self, item: any, relative_position: tuple[int]) -> int:
         """
         Method adds item to self, on given position. Returns items position index in lists.
-
         :param item: Item to add
         :param relative_position: tuple[int] position to add item on, relative to self position
         :return: int index of item on self list
@@ -91,15 +76,13 @@ class Container(ResizableItem):
     def change_item_at_index(self, index: int, item: any) -> None:
         """
         Method changes items in its list of items, but keeps previous items position.
-
-        Args:
-            index (int): Index of previous item in list
-            item (Item): Any kind of item
+        :param index: int index of item position in list
+        :param item: any type of item(Static, Resizable, ...)
         """
         self.items[index] = item
         self.items[index].position = self.items_positions[index]
 
-    def update(self):
+    def update(self) -> None:
         """
         Updates all items positions relative to self. TODO: Items positions get assigned every time.
         """
@@ -109,8 +92,10 @@ class Container(ResizableItem):
                              self.scaled_y + self.resized_items_positions[i][1]]
             item.update()
 
-    def draw(self):
-        """ Used for drawing itself and every item attached to it. """
+    def draw(self) -> None:
+        """
+        Used for drawing itself and every item attached to it.
+        """
         if self.visible:
             if self.is_resized:
                 pygame.draw.rect(

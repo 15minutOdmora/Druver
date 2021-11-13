@@ -9,28 +9,60 @@ from game.gui.item import ResizableItem, StaticItem
 
 
 class Text(StaticItem):
-    def __init__(self, position=(0, 0), text="", font="aria", size=21, color=(255, 255, 255)):
+    """
+    Class for holding text objects as items. Normal Text can not be re-sized, but can be movable.
+    Inherits from StaticItem.
+    """
+    def __init__(self,
+                 position: list[int, int] = [0, 0],
+                 text: str = "Text",
+                 font: str = "aria",
+                 size: int = 21,
+                 color: tuple[int, int, int] = (255, 255, 255)
+                 ):
+        """
+        :param position: list[int, int] position of text on screen
+        :param text: str displayed text
+        :param font: str font name or path to font file(ttf)
+        :param size: int size of font
+        :param color: tuple[int, int, int] RGB value of color of text
+        """
         self.screen = pygame.display.get_surface()
         pygame.font.init()
         self.color = color
         self.text = text
-        self.font = pygame.font.SysFont(font, size)
+        if "/" in font:  # If passed font string has / it is a path to font file, load appropriately
+            self.font = pygame.font.Font(font, size)
+        else:
+            self.font = pygame.font.SysFont(font, size)
         self.surface = self.font.render(text, True, self.color)
         size = self.font.size(text)
-
+        # Call to super method with fetched size of surface
         super().__init__(position, size)
 
-    def update(self):
+    def update(self) -> None:
+        """
+        Method will update self surface and position.
+        """
         # Override parents method
         self.surface = self.font.render(self.text, True, self.color)
         self.size = self.font.size(self.text)
 
-    def draw(self):
+    def draw(self) -> None:
+        """
+        Method will draw text on screen.
+        """
         self.screen.blit(self.surface, self.position)
 
 
 class CustomText(ResizableItem):
-    def __init__(self, text, font=Paths.LO_RES_NARROW, size=21, position=(0, 0), color=BaseColors.main_text):
+    def __init__(self,
+                 text,
+                 font=Paths.LO_RES_NARROW,
+                 size=21,
+                 position=(0, 0),
+                 color=BaseColors.main_text
+                 ):
         self.screen = pygame.display.get_surface()
         pygame.font.init()
         self.color = color
@@ -42,18 +74,31 @@ class CustomText(ResizableItem):
 
         super().__init__(position, size)
 
-    def resize(self, factor: float):
+    def resize(self, factor: float) -> None:
+        """
+        Method will re-size image and its position based on a factor passed as argument.
+        :param factor: float factor to scale item in range [0, inf]
+        """
         super(CustomText, self).resize(factor)
         self.resized = pygame.transform.scale(self.surface, self.resized_size)
         self.current_surface = self.resized
 
-    def reset_size(self):
+    def reset_size(self) -> None:
+        """
+        Method will reset its size to the initially set one.
+        """
         super(CustomText, self).reset_size()
         self.current_surface = self.surface
 
-    def update(self):
+    def update(self) -> None:
+        """
+        Method will update self surface and position.
+        """
         self.surface = self.font.render(self.text, True, self.color)
         self.size = self.font.size(self.text)
 
-    def draw(self):
+    def draw(self) -> None:
+        """
+        Method will draw text on screen.
+        """
         self.screen.blit(self.current_surface, self.position)

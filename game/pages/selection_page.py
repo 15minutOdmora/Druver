@@ -9,7 +9,7 @@ from game.pages.page import ScrollablePage, Page
 from game.constants import Paths, DEVELOPMENT_URL, SCREEN_SIZE
 from game.gui.text import CustomText, Text
 from game.gui.button import Button
-from game.gui.image import StaticImage
+from game.gui.image import StaticImage, ResizableImage
 from game.gui.grid import Grid
 from game.gui.carousel import HorizontalCarousel
 from game.gui.container import Container
@@ -86,7 +86,7 @@ class MapSelectionPage(Page):
         # Carousel
         self.carousel = HorizontalCarousel(
             self.controller,
-            item_size=[450, 500],
+            item_size=[400, 500],
             position=[0, 50],
             size=[1280, 400],
             spacing=30
@@ -95,13 +95,19 @@ class MapSelectionPage(Page):
         for i in range(8):
             cont = Container(
                 position=[0, 0],
-                size=[450, 500],
+                size=[400, 500],
                 visible=True,
                 resizable=True
             )
             cont.add_item(
                 item=CustomText(text="Map: " + str(i), size=80),
-                relative_position=[50, 50]
+                relative_position=[30, 10]
+            )
+            cont.add_item(
+                item=ResizableImage(
+                    image_path="game/assets/maps/Mugello Dessert/preview.png"
+                ),
+                relative_position=[20, 100]
             )
             self.carousel.add_item(cont)
         self.add_item(self.carousel)
