@@ -6,7 +6,9 @@ from game.constants import SCREEN_SIZE, Paths, join_paths
 from game.play.game_objects.map import Map
 from game.play.game_objects.player import Player
 from game.play.game_objects.car import Car
+from game.helpers.helpers import create_callable
 from game.gui.menus import PauseMenu
+from game.gui.button import Button
 
 
 class TimeTrial:
@@ -17,6 +19,15 @@ class TimeTrial:
         self.pause_menu = PauseMenu(
             position=[0, 0],
             size=SCREEN_SIZE
+        )
+        self.pause_menu.add_item(
+            item=Button(
+                self.controller,
+                position=[SCREEN_SIZE[0] // 2 - 20, SCREEN_SIZE[1] // 2 - 75],
+                size=[150, 40],
+                text="Quit",
+                on_click=create_callable(self.controller.redirect_to_page, "WelcomePage")
+            )
         )
         # Load map
         self.map = Map(

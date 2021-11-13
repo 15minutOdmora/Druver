@@ -34,6 +34,21 @@ class Container(ResizableItem):
         self.resizable = resizable
 
         self.items_positions: list[tuple] = []  # List containing attached items positions
+        self.resized_items_positions: list[tuple] = []
+
+    @property
+    def scaled_x(self):
+        """
+        Property returns scaled x position when container is re-sized.
+        """
+        return self.x + self.moved_position[0]
+
+    @property
+    def scaled_y(self):
+        """
+        Property returns scaled y position when container is re-sized.
+        """
+        return self.x + self.moved_position[1]
 
     def resize(self, factor: float) -> None:
         """
@@ -42,7 +57,9 @@ class Container(ResizableItem):
         """
         super(Container, self).resize(factor)
         self.resized_size = [int(self.width * factor), int(self.height * factor)]
-        for item in self.items:
+        for i, item in enumerate(self.items):  # Re-size and scale items positions based on factor
+            self.resized_items_positions[i] = [int(self.items_positions[i][0] * factor),
+                                               int(self.items_positions[i][1] * factor)]
             item.resize(factor)
 
     def reset_size(self) -> None:
@@ -65,8 +82,9 @@ class Container(ResizableItem):
         if self.resizable and not hasattr(item, "is_resized"):  # If container resizable, expect only resizable items
             raise ValueError("Container.add_item: Container is set to be resizable and only accepts resizable items.")
         self.items.append(item)
-        item_position = (self.position[0] + relative_position[0], self.position[1] + relative_position[1])
+        item_position = [relative_position[0], relative_position[1]]
         self.items_positions.append(item_position)
+        self.resized_items_positions.append(item_position)
         self.items[-1].position = item_position  # Update this items position
         return len(self.items) - 1
 
@@ -87,7 +105,8 @@ class Container(ResizableItem):
         """
         for i, item in enumerate(self.items):
             # Update items positions relative to current self position
-            item.position = [self.x + self.items_positions[i][0], self.y + self.items_positions[i][1]]
+            item.position = [self.scaled_x + self.resized_items_positions[i][0],
+                             self.scaled_y + self.resized_items_positions[i][1]]
             item.update()
 
     def draw(self):
@@ -97,7 +116,7 @@ class Container(ResizableItem):
                 pygame.draw.rect(
                     self.screen,
                     BaseColors.items,
-                    [self.x + self.moved_position[0], self.y + self.moved_position[1], self.resized_size[0], self.resized_size[1]],
+                    [self.scaled_x, self.scaled_y, self.resized_size[0], self.resized_size[1]],
                     width=1
                 )
             else:
