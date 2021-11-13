@@ -278,11 +278,32 @@ class ResizableItem(StaticItem):
         self.resized_size = self.size
         self.resized = None
 
+    @property
+    def scaled_x(self) -> int:
+        """
+        Property returns scaled x position when item is re-sized, keeping original position intact.
+        """
+        return self.x + self.moved_position[0]
+
+    @property
+    def scaled_y(self) -> int:
+        """
+        Property returns scaled y position when container is re-sized, keeping original position intact.
+        """
+        return self.y + self.moved_position[1]
+
+    @property
+    def scaled_position(self) -> list[int, int]:
+        """
+        Property returns scaled position when item is re-sized, keeping original position intact.
+        """
+        return [self.scaled_x, self.scaled_y]
+
     def resize(self, factor: float) -> None:
         """
         Method will re-size item based on a factor passed as argument. If class gets inherited method should first get
         called with super function.
-        :param factor: float factor to scale item
+        :param factor: float factor to scale item in range [0, inf]
         """
         self.resized_factor = factor
         dx = int((self.width - (self.width * factor)) // 2)

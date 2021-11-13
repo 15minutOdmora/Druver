@@ -38,7 +38,6 @@ class HorizontalCarousel(Item):
 
         # Centre position of item in self, subtract item size so item is centered
         self.center_position = [self.size[0] // 2 - item_size[0] // 2, 0]
-        print(self.center_position)
         # Current index of selected item
         self.current_index = 0
         self.items_positions = []  # Relative position of items to self
