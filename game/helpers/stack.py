@@ -79,3 +79,73 @@ class Stack:
         for elt in self._data:
             bt += " : " + str(elt)
         return bt + " : Top"
+
+
+class Pointer:
+    """
+    Pointer used to store data that points on specific data. Pointer can point to anything.
+    """
+    def __init__(self, to: any):
+        """
+        :param to: any object the instance will point to
+        """
+        self.to = to
+
+    def __str__(self) -> str:
+        """
+        String representation of stack object
+        """
+        return f"<Pointer: to -> {self.to}>"
+
+
+class UniqueStack(Stack):
+    """
+    UniqueStack extends Stack by adding pointer elements for eliminating duplicate element types inside stack.
+    Every element inside stack is either unique (in type of class) or is a pointer pointing to an already existent
+    object instance of the same type.
+    No initial data can be added to Unique stack.
+    """
+    def __init__(self):
+        super().__init__()
+        # For saving already added object types and their positions inside the self._data
+        self._element_types = {}  # Dictionary type(object): index in self._data
+
+    def push(self, element):
+        """
+        Method adds element to stack, if element type already inside self -> adds a pointer object pointing to it.
+        :param element: any element to add to stack
+        """
+        if type(element) in self._element_types.keys():  # If element already inside stack, remove from position
+            at_index = self._element_types[type(element)]  # Get index of this type
+            super(UniqueStack, self).push(Pointer(at_index))  # Add pointer to that index
+        else:
+            self._element_types[type(element)] = len(self._data)  # Save type and its index in list
+            super(UniqueStack, self).push(element)
+
+    def peak(self) -> any:
+        """
+        Method returns the top element of the stack. Does not change the stack.
+        :return: element
+        """
+        if self.empty():
+            raise ValueError("UniqueStack.peak: The stack is empty.")
+        if isinstance(self._data[-1], Pointer):
+            pointer = self._data[-1]
+            return self._data[pointer.to]
+        return self._data[-1]
+
+    def take(self) -> any:
+        """
+        Method returns the top element from the stack while also removing it.
+        :return:
+        """
+        if self.empty():
+            raise ValueError("UniqueStack.take: The stack is empty.")
+        element = self._data[-1]
+        self._data.pop()
+        self._counter -= 1
+        if isinstance(element, Pointer):
+            return self._data[element.to]
+        else:
+            del self._element_types[type(element)]
+            return element
