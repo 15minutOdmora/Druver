@@ -9,7 +9,7 @@ import sys
 import inspect
 
 from game.pages import *  # This imports every page from the packages __init__ file
-from game.helpers.stack import Stack
+from game.helpers.stack import Stack, UniqueStack
 from game.helpers import helpers
 
 from game.play.time_trial import TimeTrial
@@ -41,7 +41,7 @@ class Controller:
             "TimeTrial": TimeTrial,
             "SelectionPage": SelectionPage
         }
-        self.page_stack = Stack()
+        self.page_stack = UniqueStack()
 
         self.current_page = WelcomePage
 
@@ -120,6 +120,7 @@ class Controller:
             self.current_page = self.pages[to_page]  # Page gets initialized through setter
         else:
             print(f"Controller: Redirection error to page {to_page}.\n   Page does not exist.")
+        print(self.page_stack)
 
     def go_back(self) -> None:
         """
