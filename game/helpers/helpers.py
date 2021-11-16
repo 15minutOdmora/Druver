@@ -19,3 +19,19 @@ def create_callable(func: Callable, *args, **kwargs) -> Callable:
     def callable_func():
         return func(*args, **kwargs)
     return callable_func
+
+
+def check_function_arguments(func: Callable, *args) -> Callable:
+    """
+    Function checks that the passed function func accepts arguments passed through args.
+    :param func: Callable function to perform check on.
+    :param args: Arguments passed to check presence in passed function.
+    :return: Passed function check passed, otherwise error gets raised.
+    """
+    var_names = func.__code__.co_varnames
+    for i, arg in enumerate(args):
+        if var_names[i] != arg:
+            error_msg = f"check_function_arguments: Function {func} " \
+                        f"does not have the argument {arg} in the right position."
+            raise ValueError(error_msg)
+    return func
