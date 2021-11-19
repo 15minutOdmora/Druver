@@ -9,7 +9,7 @@ import pygame
 from game.helpers import helpers
 from game.pages.page import Page
 from game.constants import Paths, DEVELOPMENT_URL
-from game.gui.text import CustomText
+from game.gui.text import CustomText, Text
 from game.gui.button import Button, AnimatedButton
 from game.gui.image import StaticImage
 from game.gui.grid import Grid
@@ -39,7 +39,7 @@ class WelcomePage(Page):
         self.test_button = Button(
             self.controller,
             size=(180, 50),
-            text=CustomText(
+            text=Text(
                 text="Start Game",
                 size=36
             ),
@@ -55,7 +55,7 @@ class WelcomePage(Page):
         self.settings_button = Button(
             self.controller,
             size=(180, 50),
-            text=CustomText(
+            text=Text(
                 text="Settings",
                 size=36
             )
@@ -70,7 +70,7 @@ class WelcomePage(Page):
         self.credits_button = Button(
             self.controller,
             size=(180, 50),
-            text=CustomText(
+            text=Text(
                 text="Credits",
                 size=36
             )
@@ -85,7 +85,7 @@ class WelcomePage(Page):
         self.web_page_button = Button(
             self.controller,
             size=(180, 50),
-            text=CustomText(
+            text=Text(
                 text="Web Page",
                 size=36
             ),

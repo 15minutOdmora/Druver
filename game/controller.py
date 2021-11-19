@@ -120,7 +120,6 @@ class Controller:
             self.current_page = self.pages[to_page]  # Page gets initialized through setter
         else:
             print(f"Controller: Redirection error to page {to_page}.\n   Page does not exist.")
-        print(self.page_stack)
 
     def go_back(self) -> None:
         """

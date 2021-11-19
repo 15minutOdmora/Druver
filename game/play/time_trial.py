@@ -2,6 +2,8 @@
 Time trial module, has TimeTrial class that is similar to Page classes but items can't be added to it.
 """
 
+import pygame
+
 from game.constants import SCREEN_SIZE, Paths, join_paths
 from game.play.game_objects.map import Map
 from game.play.game_objects.player import Player
@@ -9,10 +11,14 @@ from game.play.game_objects.car import Car
 from game.helpers.helpers import create_callable
 from game.gui.menus import PauseMenu
 from game.gui.button import Button
+from game.gui.text import CustomText
+from game.pages.loading_page import LoadingPage
 
 
 class TimeTrial:
-    """ Time trial class, similar to a page, as it has the draw and update methods, but has own logic."""
+    """
+    Time trial class, similar to a page, as it has the draw and update methods, but has own logic.
+    """
     def __init__(self, controller):
         self.controller = controller
 
@@ -29,14 +35,23 @@ class TimeTrial:
                 on_click=create_callable(self.controller.redirect_to_page, "WelcomePage")
             )
         )
+        # Create temporary loading page
+        self.loading_page = LoadingPage()
         # Load map
         self.map = Map(
             self.controller,
             folder_name="Mugello Dessert"
         )
         # Load player
-        self.car = Car(self.controller, "FastBoi")
+        self.car = Car(
+            self.controller,
+            "Banana",
+            initial_position=[2050, 1650]
+        )
         self.player = Player(self.controller, self.map, self.car, "Testing")
+        # Update number of total update calls to loading page
+        self.loading_page.add_calls(self.map.get_number_of_loading_update_calls())
+        self.map.load(self.loading_page.update)  # Pass update method to update loading_page data and screen
 
     def update(self):
         if not self.controller.paused:

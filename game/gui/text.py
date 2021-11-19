@@ -16,7 +16,7 @@ class Text(StaticItem):
     def __init__(self,
                  position: list[int, int] = [0, 0],
                  text: str = "Text",
-                 font: str = "aria",
+                 font: str = Paths.LO_RES_NARROW,
                  size: int = 21,
                  color: tuple[int, int, int] = (255, 255, 255)
                  ):
@@ -31,7 +31,7 @@ class Text(StaticItem):
         pygame.font.init()
         self.color = color
         self.text = text
-        if "/" in font:  # If passed font string has / it is a path to font file, load appropriately
+        if "\\" in font:  # If passed font string has / it is a path to font file, load appropriately
             self.font = pygame.font.Font(font, size)
         else:
             self.font = pygame.font.SysFont(font, size)
