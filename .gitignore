@@ -8,8 +8,12 @@
 /build
 /dist
 
-# Maps
-/assets/maps
+# Assets
+/assets/maps/*
+/assets/sounds/*
+/assets/objects/*
+/assets/images/*
+/assets/fonts/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
