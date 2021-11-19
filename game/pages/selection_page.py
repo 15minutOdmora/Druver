@@ -77,7 +77,7 @@ class MapSelectionPage(Page):
         super().__init__(controller)
 
         # Title
-        self.title = CustomText(
+        self.title = Text(
             text="Select Map",
             size=72,
         )

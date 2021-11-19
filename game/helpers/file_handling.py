@@ -3,6 +3,7 @@ Module for anything related to files
 """
 
 from __future__ import annotations
+from typing import Callable
 import os
 import time
 import json
@@ -90,11 +91,30 @@ class ImageLoader:
         return image_list
 
     @staticmethod
-    def load_tiles_from_folder(folder_path: str) -> list[list[tuple]]:
+    def load_tiles_from_folder(
+            folder_path: str,
+            update_method: Callable = lambda _: _,
+            currently_loading: str = "") -> list[list[tuple]]:
+        """
+        Method loads tiles from folder, where each tile is an image with the name ij.format where i, j represent
+        position on of tile in grid.
+        Optional currently_loading parameter can be passed as a callable function with one parameter, this function
+        gets called for every tile load, tile positioning in grid, and 2 times before hand and once after, passing
+        string representing current action.
+        Another optional argument currently_loading can be passed which gets placed before the string representing
+        current action on update_method call.
+        :param folder_path: str path to folder to load from
+        :param update_method: Callable function with one parameter which gets called on different progress occasions
+        :param currently_loading: str that gets placed beforehand of current action string passed to update_method
+        :return:
+        """
+        update_method(currently_loading + " fetching files.")
         images = DirectoryReader.get_all_files(folder_path)
+        update_method(currently_loading + " sorting file names.")
         rows, columns = [], []
         for name, path in images:
-            indexes = name.split(".")[0]  # Get left side of .
+            update_method(currently_loading + f" checking {name}")
+            indexes = name.split(".")[0]  # Get left side of.
             try:
                 rows.append(int(indexes[0]))
                 columns.append(int(indexes[1]))
@@ -105,8 +125,19 @@ class ImageLoader:
         # Add images to grid
         for name, path in images:
             indexes = get_indexes_from_string(name.split(".")[0])
+            update_method(currently_loading + f" loading tile {indexes[0]}, {indexes[1]}")
             grid[indexes[0]][indexes[1]] = ImageLoader.load_image(path)
+        update_method(currently_loading + f" finished.")
         return grid
+
+    @staticmethod
+    def get_number_of_files(folder_path: str) -> int:
+        """
+        Function returns number of items in given directory.
+        :param folder_path: str Path to folder
+        :return: int Number of files in given folder
+        """
+        return len(os.listdir(folder_path))
 
 
 class DirectoryReader:

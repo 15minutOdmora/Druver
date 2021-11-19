@@ -7,7 +7,7 @@ import pygame
 from game.helpers import helpers
 from game.pages.page import Page
 from game.constants import Paths, DEVELOPMENT_URL
-from game.gui.text import CustomText
+from game.gui.text import CustomText, Text
 from game.gui.button import Button
 from game.gui.image import StaticImage
 from game.gui.grid import Grid
@@ -24,7 +24,7 @@ class StartGamePage(Page):
             visible=False
         )
         # Title
-        self.title = CustomText(
+        self.title = Text(
             text="Start Game",
             size=72
         )
@@ -38,7 +38,7 @@ class StartGamePage(Page):
         self.back_button = Button(
             controller=self.controller,
             size=(60, 40),
-            text=CustomText(
+            text=Text(
                 text="Back",
                 size=36
             ),
@@ -55,7 +55,7 @@ class StartGamePage(Page):
         self.time_trial_button = Button(
             controller=self.controller,
             size=(150, 60),
-            text=CustomText(
+            text=Text(
                 text="Time Trial",
                 size=36
             ),
@@ -71,7 +71,7 @@ class StartGamePage(Page):
         self.levels_button = Button(
             controller=self.controller,
             size=(150, 60),
-            text=CustomText(
+            text=Text(
                 text="Levels",
                 size=36
             )

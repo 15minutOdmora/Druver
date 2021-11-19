@@ -2,7 +2,7 @@
 Module containing development class for drawing stats to page.
 """
 
-from annotations import Callable
+from typing import Callable
 
 import pygame
 

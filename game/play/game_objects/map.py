@@ -3,6 +3,7 @@ Module containing different maps.
 """
 
 from __future__ import annotations
+from typing import Callable
 import math
 import time
 
@@ -29,7 +30,10 @@ class MiniMap:
     It needs maps size and players position on the map to draw the player on the minimap.
     Note: The property player position needs to updated at each frame.
     """
-    def __init__(self, image, position: list[int, int], map_size: list[int, int]):
+    def __init__(self,
+                 image,
+                 position: list[int, int],
+                 map_size: list[int, int]):
         """
         :param image: Loaded Image of minimap
         :param position: Position of minimap on screen
@@ -82,7 +86,12 @@ class Tile:
     """
     Tile class for representing a single tile on map.
     """
-    def __init__(self, screen: "Display", image: "Image", mask_image: "Image", position: list[int, int], size: list[int, int]):
+    def __init__(self,
+                 screen: "Display",
+                 image: "Image",
+                 mask_image: "Image",
+                 position: list[int, int],
+                 size: list[int, int]):
         """
         :param screen: Currently opened display
         :param image: Image, used as ground
@@ -119,7 +128,7 @@ class Map:
         map_size: Size of map in px
         offset: Offset to move map (based on player)
     """
-    def __init__(self, controller, folder_name):
+    def __init__(self, controller, folder_name: str):
         """
         :param game: Current game object
         :param folder_name: Name of map folder saved in assets/maps/
@@ -130,6 +139,8 @@ class Map:
         self.half_screen_width, self.half_screen_height = SCREEN_SIZE[0] // 2, SCREEN_SIZE[1] // 2
         self.folder_name = folder_name
         self.folder_path = join_paths(Paths.maps, self.folder_name)
+        self.ground_folder_path = join_paths(self.folder_path, "ground")
+        self.mask_folder_path = join_paths(self.folder_path, "mask")
         # These get set by the load_tiles method
         self.tiles: list[list] = None
         self.mask_tiles: list[list] = None
@@ -139,27 +150,41 @@ class Map:
         self.offset = [0, 0]
         # Currently visible tiles
         self.visible_tiles = [[0, 0], [0, 1], [1, 0], [1, 1]]
-        # Load all tile data
-        self.__load_tiles()
         # Load minimap and create object, load after map loading so map size is set
-        minimap_image = ImageLoader.load_transparent_image(join_paths(self.folder_path, "minimap.png"))
-        self.minimap = MiniMap(
-            image=minimap_image,
-            position=[10, 575],
-            map_size=self.map_size
-        )
+        self.minimap = None
 
-    def __load_tiles(self) -> None:
+    def get_number_of_loading_update_calls(self) -> None:
+        """
+        Method returns total number of times the update method will get called while loading map.
+        :return: int Number of images
+        """
+        # Multiply by 2 as ImageLoade.load_tiles_from_folder calls update method twice for each image + 3 times around
+        num = ImageLoader.get_number_of_files(self.ground_folder_path) * 2 + 3
+        num += ImageLoader.get_number_of_files(self.mask_folder_path) * 2 + 3
+        num += 2  # Calls in load method
+        return num
+
+    def load(self, update_method: Callable) -> None:
         """
         Method loads tiles into the tiles list grid.
+        :param update_method: Callable function with one parameter, this gets called(and passed a string) every
+                              progress iteration
         """
         start_time = time.time()
-        ground_folder_path = join_paths(self.folder_path, "ground")
-        mask_folder_path = join_paths(self.folder_path, "mask")
-        ground_images = ImageLoader.load_tiles_from_folder(ground_folder_path)  # Loads every image in a grid
-        mask_images = ImageLoader.load_tiles_from_folder(mask_folder_path)
+        # Loads every image in a grid
+        ground_images = ImageLoader.load_tiles_from_folder(
+            self.ground_folder_path,
+            update_method=update_method,
+            currently_loading="Map tiles"
+        )
+        mask_images = ImageLoader.load_tiles_from_folder(
+            self.mask_folder_path,
+            update_method=update_method,
+            currently_loading="Mask tiles"
+        )
         self.tiles = []
         self.tile_size = ground_images[0][0].get_size()  # Get size of one image
+        update_method("Map setting tiles")
         current_position = [0, 0]
         for i in range(len(ground_images)):
             self.tiles.append([])
@@ -182,7 +207,20 @@ class Map:
             current_position[1] += self.tile_size[1]
         self.map_size = (current_position[0], current_position[1])
         self.number_of_tiles = [len(self.tiles), len(self.tiles[0])]
+        update_method("Loading minimap")
+        self.load_minimap()
         print(f"Map loading took: {time.time() - start_time}s")
+
+    def load_minimap(self) -> None:
+        """
+        Method loads minimap into self object.
+        """
+        minimap_image = ImageLoader.load_transparent_image(join_paths(self.folder_path, "minimap.png"))
+        self.minimap = MiniMap(
+            image=minimap_image,
+            position=[10, 575],
+            map_size=self.map_size
+        )
 
     def update_visible_tiles_indexes(self) -> None:
         """

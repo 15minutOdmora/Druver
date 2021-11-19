@@ -109,3 +109,7 @@ class Car:
         ster = f"Steering angle: {self.steering_angle}"
         ster_surface = self.controller.development.font.render(ster, True, (255, 255, 255))
         self.screen.blit(ster_surface, (30, 380))
+        # Position
+        pos = f"Position: ({int(self.position[0])}, {int(self.position[1])})"
+        pos_surface = self.controller.development.font.render(pos, True, (255, 255, 255))
+        self.screen.blit(pos_surface, (30, 400))
