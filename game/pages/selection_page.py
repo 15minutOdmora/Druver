@@ -9,10 +9,11 @@ from game.pages.page import ScrollablePage, Page
 from game.constants import Paths, DEVELOPMENT_URL, SCREEN_SIZE
 from game.gui.text import CustomText, Text
 from game.gui.button import Button
-from game.gui.image import StaticImage, ResizableImage
+from game.gui.image import StaticImage, ResizableImage, RotatingImages
 from game.gui.grid import Grid
 from game.gui.carousel import HorizontalCarousel
 from game.gui.container import Container
+from game.helpers.file_handling import DirectoryReader
 
 
 half_screen = SCREEN_SIZE[0] // 2, SCREEN_SIZE[1] // 2
@@ -32,23 +33,28 @@ class PlayerSelectionPage(Page):
         # Carousel
         self.carousel = HorizontalCarousel(
             self.controller,
-            item_size=[300, 500],
+            item_size=[310, 400],
             position=[0, 50],
             size=[1280, 400],
             spacing=30
         )
         self.carousel.not_selected_item_resize_factor = 0.4
         self.carousel.visible = False
-        for i in range(8):
+        car_previews = DirectoryReader.get_car_previews()
+        for car in car_previews:
             cont = Container(
                 position=[0, 0],
-                size=[300, 500],
-                visible=True,
+                size=[310, 400],
+                visible=False,
                 resizable=True
             )
             cont.add_item(
-                item=CustomText(text="Car: " + str(i), size=80),
-                relative_position=[50, 50]
+                item=CustomText(text=car["name"], size=80),
+                relative_position=[25, 25]
+            )
+            cont.add_item(
+                item=RotatingImages(car["preview"]),
+                relative_position=[5, 130]
             )
             self.carousel.add_item(cont)
         self.add_item(self.carousel)

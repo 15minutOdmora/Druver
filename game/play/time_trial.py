@@ -45,7 +45,7 @@ class TimeTrial:
         # Load player
         self.car = Car(
             self.controller,
-            "Banana",
+            "Sandal",
             initial_position=[2050, 1650]
         )
         self.player = Player(self.controller, self.map, self.car, "Testing")

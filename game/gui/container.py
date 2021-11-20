@@ -90,6 +90,7 @@ class Container(ResizableItem):
             # Update items positions relative to current self position
             item.position = [self.scaled_x + self.resized_items_positions[i][0],
                              self.scaled_y + self.resized_items_positions[i][1]]
+            item.selected = self.selected
             item.update()
 
     def draw(self) -> None:
