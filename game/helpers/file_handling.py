@@ -10,6 +10,8 @@ import json
 
 import pygame
 
+from game.constants import Paths, join_paths
+
 
 def abs_path(path: str) -> str:
     """
@@ -174,6 +176,36 @@ class DirectoryReader:
             if item.is_file():
                 file_list.append((item.name, os.path.abspath(item.path)))  # Append tuple
         return file_list
+
+    @staticmethod
+    def get_map_previews(map_folder_path: str = Paths.maps) -> list:
+        """TODO"""
+        map_previews = []
+        all_map_folders = DirectoryReader.get_all_folders(map_folder_path)
+        for name, path in all_map_folders:
+            if "_" in name:
+                continue
+            map_dict = {"name": name,
+                        "image": join_paths(path, "preview.png")
+                        }
+            # Todo Add loading of properties json about map
+            map_previews.append(map_dict)
+        return map_previews
+
+    @staticmethod
+    def get_car_previews(car_folder_path: str = Paths.cars) -> list:
+        """TODO"""
+        car_previews = []
+        all_car_folders = DirectoryReader.get_all_folders(car_folder_path)
+        for name, path in all_car_folders:
+            if "_" in name:
+                continue
+            car_dict = {"name": name,
+                        "preview": join_paths(path, "preview")
+                        }
+            # Todo Add loading of config json
+            car_previews.append(car_dict)
+        return car_previews
 
 
 class Json:

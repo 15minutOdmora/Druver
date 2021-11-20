@@ -47,7 +47,10 @@ class ResizableImage(ResizableItem):
         :param image_path: str path to image, relative or absolute
         :param position: list[int, int] position of image on screen
         """
-        self.image = ImageLoader.load_image(image_path)  # Original Image
+        if isinstance(image_path, pygame.Surface):
+            self.image = image_path
+        else:
+            self.image = ImageLoader.load_image(image_path)  # Original Image
         self.current_image = self.image  # Currently used image
         size = tuple(self.image.get_rect()[2:])
         super().__init__(position, size)  # Initialize parent class with fetched size
@@ -73,5 +76,66 @@ class ResizableImage(ResizableItem):
         Method will draw itself and every item attached to it.
         """
         self.screen.blit(self.current_image, self.position)
+        for item in self.items:
+            item.draw()
+
+
+class RotatingImages(ResizableItem):
+    """
+    RotatingImages holds a folder of images, when item gets selected we scroll through images otherwise the image on the
+    starting index is displayed and re-sized.
+    Inherits from ResizableItem as it can be resized.
+    """
+    def __init__(self,
+                 folder_path: str,
+                 position: list[int, int] = [0, 0],
+                 rotation_speed: float = 0.1,
+                 starting_index: int = 30
+                 ):
+        """
+        :param folder_path: str path to folder containing images
+        :param position: list[int, int] position of item on screen
+        :param rotation_speed: float speed of rotation, value increments current index of image every frame
+        :param starting_index: int index of initial image displayed and , in folder for
+        """
+        self.images = ImageLoader.load_transparent_folder(folder_path)
+        self.resizable_image = ResizableImage(self.images[starting_index])
+
+        self.max_index = len(self.images) - 1
+        self.starting_index = starting_index
+        self.current_index = starting_index
+        self.rotation_speed = rotation_speed
+
+        size = self.resizable_image.size
+        super().__init__(position, size)  # Initialize parent class with fetched size
+
+    def resize(self, factor: float) -> None:
+        """
+        Method will re-size image and its position based on a factor passed as argument.
+        :param factor: float factor to scale item in range [0, inf]
+        """
+        super(RotatingImages, self).resize(factor)
+        self.resizable_image.resize(factor)
+
+    def reset_size(self) -> None:
+        """
+        Method will reset its size to the initially set one.
+        """
+        super(RotatingImages, self).reset_size()
+        self.resizable_image.reset_size()
+
+    def draw(self) -> None:
+        """
+        Method will draw itself and every item attached to it.
+        """
+        self.resizable_image.position = self.position
+        if self.selected:
+            self.current_index += self.rotation_speed
+            if self.current_index >= self.max_index:
+                self.current_index = 0
+            self.screen.blit(self.images[int(self.current_index)], self.position)
+        else:
+            self.current_index = self.starting_index
+            self.resizable_image.draw()
         for item in self.items:
             item.draw()

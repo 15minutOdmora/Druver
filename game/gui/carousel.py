@@ -47,7 +47,7 @@ class HorizontalCarousel(Item):
         self.scroll_to_x = 0
         self.scroll_to_index = 0
         self.scroll_direction = 0
-        self.scroll_speed = 3
+        self.scroll_speed = 5
         # Used in resizing animation
         self.not_selected_item_resize_factor = 0.2
         self.change_distance = self.item_size[0] + self.spacing
@@ -81,6 +81,7 @@ class HorizontalCarousel(Item):
         self.scroll_to_x -= self.item_size[0] + self.spacing
         self.scroll_direction = -1
         self.is_scrolling = True
+        self.items[self.current_index].selected = False
 
     def scroll_left(self) -> None:
         """
@@ -92,6 +93,7 @@ class HorizontalCarousel(Item):
         self.scroll_to_x += self.item_size[0] + self.spacing
         self.scroll_direction = 1
         self.is_scrolling = True
+        self.items[self.current_index].selected = False
 
     def update_sizes(self, change_left: int) -> None:
         """
@@ -135,6 +137,8 @@ class HorizontalCarousel(Item):
         self.items.append(item)
         if len(self.items) != 1:  # Leave first one in its full size
             self.items[-1].resize(1 - self.not_selected_item_resize_factor)
+        else:
+            self.items[-1].selected = True
 
     def update(self) -> None:
         """
