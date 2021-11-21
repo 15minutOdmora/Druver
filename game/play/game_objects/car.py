@@ -12,13 +12,13 @@ from game.helpers.file_handling import ImageLoader, Json
 
 class Car:
     """@DynamicAttrs"""
-    def __init__(self, controller, name: str, initial_position=[0, 0]):
+    def __init__(self, controller, car_name: str, initial_position=[0, 0]):
         self.screen = pygame.display.get_surface()
         self.controller = controller
         self.position = initial_position
 
         # Load car data
-        self.name = name
+        self.name = car_name
         self.folder = join_paths(Paths.cars, self.name)
         self.images = ImageLoader.load_transparent_folder(join_paths(self.folder, "images"))
         self.number_of_images = len(self.images)

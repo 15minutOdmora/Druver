@@ -56,7 +56,7 @@ class PlayerSelectionPage(Page):
                 item=RotatingImages(car["preview"]),
                 relative_position=[5, 130]
             )
-            self.carousel.add_item(cont)
+            self.carousel.add_item(cont, name=car["name"])
         self.add_item(self.carousel)
 
         self.scroll_left_button = Button(
@@ -76,6 +76,9 @@ class PlayerSelectionPage(Page):
             text=""
         )
         self.add_item(self.scroll_right_button)
+
+    def get_selected(self):
+        return self.carousel.get_currently_selected()
 
 
 class MapSelectionPage(Page):
@@ -115,7 +118,7 @@ class MapSelectionPage(Page):
                 ),
                 relative_position=[20, 100]
             )
-            self.carousel.add_item(cont)
+            self.carousel.add_item(cont, name="Mugello Dessert")  # Todo: Make for different maps
         self.add_item(self.carousel)
 
         self.scroll_left_button = Button(
@@ -136,11 +139,14 @@ class MapSelectionPage(Page):
         )
         self.add_item(self.scroll_right_button)
 
+    def get_selected(self):
+        return self.carousel.get_currently_selected()
+
 
 class SelectionPage(ScrollablePage):
-    def __init__(self, controller):
+    def __init__(self, controller, to_game_mode: str = "TimeTrial"):
         super().__init__(controller)
-        # Todo add scroller button thingy on the right side of screen
+
         self.player_selection_page = PlayerSelectionPage(controller)
         self.add_page(self.player_selection_page)
         self.map_selection_page = MapSelectionPage(controller)
@@ -171,7 +177,12 @@ class SelectionPage(ScrollablePage):
                 self.controller,
                 [1000, SCREEN_SIZE[1] - 100],
                 size=(160, 40),
-                on_click=helpers.create_callable(self.controller.redirect_to_page, "TimeTrial"),
+                on_click=helpers.create_callable(
+                    self.controller.redirect_to_page,
+                    to_game_mode,
+                    map_name=helpers.create_callable(self.map_selection_page.get_selected),
+                    car_name=helpers.create_callable(self.player_selection_page.get_selected)
+                ),
                 text="Save and play"
             )
         )
