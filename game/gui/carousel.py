@@ -35,7 +35,7 @@ class HorizontalCarousel(Item):
         super().__init__(controller, position, size)
         self.item_size = item_size
         self.spacing = spacing  # Spacing between items
-
+        self.item_names = []
         # Centre position of item in self, subtract item size so item is centered
         self.center_position = [self.size[0] // 2 - item_size[0] // 2, 0]
         # Current index of selected item
@@ -125,20 +125,29 @@ class HorizontalCarousel(Item):
                 self.scroll(self.scroll_speed * self.scroll_direction)
                 self.update_sizes(change_left)
 
-    def add_item(self, item) -> None:
+    def add_item(self, item, name: str = "") -> None:
         """
         Method adds one item to the list, items are containers containing items.
         Added container has to be re-sizable with te attribute resizable set to true.
         :param item: Container object
+        :param name: Name of item, used in get_currently_selected method
         """
         # Items get added one next to the other, first item is in the center of the carousel
         x_pos = self.position[0] + self.center_position[0] + ((self.item_size[0] + self.spacing) * len(self.items))
         self.items_positions.append([x_pos, self.y])
         self.items.append(item)
+        self.item_names.append(name)
         if len(self.items) != 1:  # Leave first one in its full size
             self.items[-1].resize(1 - self.not_selected_item_resize_factor)
         else:
             self.items[-1].selected = True
+
+    def get_currently_selected(self) -> str:
+        """
+        Method returns name of currently selected item.
+        :return: str name of item
+        """
+        return self.item_names[self.current_index]
 
     def update(self) -> None:
         """

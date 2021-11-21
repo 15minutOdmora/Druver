@@ -19,8 +19,10 @@ class TimeTrial:
     """
     Time trial class, similar to a page, as it has the draw and update methods, but has own logic.
     """
-    def __init__(self, controller):
+    def __init__(self, controller, map_name=lambda: "Mugello Dessert", car_name=lambda: "Sandal"):
         self.controller = controller
+        self.map_name = map_name()
+        self.car_name = car_name()
 
         self.pause_menu = PauseMenu(
             position=[0, 0],
@@ -40,12 +42,12 @@ class TimeTrial:
         # Load map
         self.map = Map(
             self.controller,
-            folder_name="Mugello Dessert"
+            folder_name=self.map_name
         )
         # Load player
         self.car = Car(
             self.controller,
-            "Sandal",
+            car_name=self.car_name,
             initial_position=[2050, 1650]
         )
         self.player = Player(self.controller, self.map, self.car, "Testing")

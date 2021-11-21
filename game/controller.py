@@ -110,16 +110,16 @@ class Controller:
         """
         return self.game.development
 
-    def redirect_to_page(self, to_page: str) -> None:
+    def redirect_to_page(self, to_page: str, *args, **kwargs) -> None:
         """
-        Method redirects to page defined as a string.
+        Method redirects to page defined as a string. Args and Kwargs can be passed to page class initialization.
         Error gets displayed if page does not exist.
         :param to_page: String name of page to redirect to
         """
         if to_page in self.pages.keys():
-            self.current_page = self.pages[to_page]  # Page gets initialized through setter
+            self.page_stack.push(self.pages[to_page](self, *args, **kwargs))  # Initialize page and push on stack
         else:
-            print(f"Controller: Redirection error to page {to_page}.\n   Page does not exist.")
+            print(f"Controller: Redirection error to page {to_page}. Page does not exist.")
 
     def go_back(self) -> None:
         """
