@@ -12,6 +12,9 @@ from game.development import Development
 
 
 class Game:
+    """
+    Main class for game, holds every game wide property and settings.
+    """
     def __init__(self):
         # Pygame initial configuration
         pygame.init()
@@ -30,7 +33,10 @@ class Game:
         self.development = Development(self)
 
     @property
-    def dt(self):
+    def dt(self) -> float:
+        """
+        Difference in time between current frame and previous frame.
+        """
         return self._dt * 0.001
 
     def run(self) -> None:

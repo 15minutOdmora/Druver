@@ -7,7 +7,13 @@ import pygame
 
 
 class Window:
+    """
+    Main class for handling everything window related.
+    """
     def __init__(self, game: "Game"):
+        """
+        :param game: Game main object for current game
+        """
         self.game = game
         self.screen = self.game.screen
 

@@ -11,7 +11,13 @@ from game.helpers.helpers import create_callable
 
 
 class Page:
+    """
+    Main class other pages should inherit from.
+    """
     def __init__(self, controller):
+        """
+        :param controller: Controller object used for controlling data access between classes
+        """
         self.screen = pygame.display.get_surface()
         self.controller = controller
         self.items = []
@@ -69,18 +75,28 @@ class Page:
     def height(self, new_height: int) -> None:
         self.rect.height = new_height
 
-    def add_item(self, item: any):
+    def add_item(self, item: any) -> None:
+        """
+        Method adds item to page. Items position should be set beforehand.
+        :param item: Item to add
+        """
         self.items.append(item)
         self.items_positions.append(item.position)
 
-    def update(self):
+    def update(self) -> None:
+        """
+        Move items relative to self current position.
+        """
         for i, item in enumerate(self.items):
             x = self.x + self.items_positions[i][0]
             y = self.y + self.items_positions[i][1]
             item.position = [x, y]
             item.update()
 
-    def draw(self):
+    def draw(self) -> None:
+        """
+        Method draws every item added to page.
+        """
         for item in self.items:
             item.draw()
 

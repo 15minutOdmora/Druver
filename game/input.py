@@ -5,7 +5,12 @@ Module containing the input class which updates and handles keyboard / mouse inp
 import pygame
 
 
-def get_key_pressed_dict(keys_pressed):
+def get_key_pressed_dict() -> dict:
+    """
+    Method returns a dictionary of currently pressed keys (on current frame).
+    :return: dict containing all used keys state
+    """
+    keys_pressed = pygame.key.get_pressed()
     mouse = pygame.mouse.get_pressed()
     return {
         "left": keys_pressed[pygame.K_LEFT],
@@ -23,7 +28,13 @@ def get_key_pressed_dict(keys_pressed):
 
 
 class Input:
+    """
+    Main class for handling keyboard and mouse input.
+    """
     def __init__(self, game):
+        """
+        :param game: Game main object in current game
+        """
         self.game = game
         self.controller = self.game.controller
 
@@ -64,7 +75,7 @@ class Input:
                 return False
         # We do this at the end as mouse.get_pressed might not as expected if called before pygame.event.get()
         self.controller.mouse_position = pygame.mouse.get_pos()
-        key_pressed = get_key_pressed_dict(pygame.key.get_pressed())
+        key_pressed = get_key_pressed_dict()
         self.controller.key_pressed = key_pressed
         self.controller.mouse_pressed = key_pressed["mouse"]["left"]
         self.controller.mouse_movement = pygame.mouse.get_rel()  # Movement of mouse on two consecutive calls

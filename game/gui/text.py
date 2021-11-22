@@ -56,13 +56,24 @@ class Text(StaticItem):
 
 
 class CustomText(ResizableItem):
+    """
+    CustomText inherits from ResizableItem and is there for re-sizable. Works the same as every other re-sizable item.
+    It uses custom fonts provided as ttf files. No system-wide fonts can be used.
+    """
     def __init__(self,
-                 text,
-                 font=Paths.LO_RES_NARROW,
-                 size=21,
-                 position=(0, 0),
-                 color=BaseColors.main_text
+                 text: str,
+                 font: str = Paths.LO_RES_NARROW,
+                 size: int = 21,
+                 position: list[int, int] = [0, 0],
+                 color: tuple[int, int, int] = BaseColors.main_text
                  ):
+        """
+        :param text: str representing text to display
+        :param font: str path to used font
+        :param size: int representing size of font
+        :param position: list[int, int] position of item on screen (upper left corner)
+        :param color: tuple[int, int, int] representing RGB values of color
+        """
         self.screen = pygame.display.get_surface()
         pygame.font.init()
         self.color = color

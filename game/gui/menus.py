@@ -1,5 +1,5 @@
 """
-Module containing menu classes. Menus do not inherit from the Item class.
+Module containing menu classes. TODO in task.
 """
 
 import pygame
