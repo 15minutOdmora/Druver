@@ -179,7 +179,12 @@ class DirectoryReader:
 
     @staticmethod
     def get_map_previews(map_folder_path: str = Paths.maps) -> list:
-        """TODO"""
+        """
+        Method loads a list of map previews where it loads each maps data in a dict and then returns a list of
+        dictionaries.
+        :param map_folder_path: str path to folder containing map folders
+        :return: list -> todo: example of dict
+        """
         map_previews = []
         all_map_folders = DirectoryReader.get_all_folders(map_folder_path)
         for name, path in all_map_folders:
@@ -194,7 +199,12 @@ class DirectoryReader:
 
     @staticmethod
     def get_car_previews(car_folder_path: str = Paths.cars) -> list:
-        """TODO"""
+        """
+        Method loads a list of car previews where it loads each cars data in a dict and then returns a list of
+        dictionaries.
+        :param car_folder_path: str path to folder containing car folders
+        :return: list -> todo: example of dict
+        """
         car_previews = []
         all_car_folders = DirectoryReader.get_all_folders(car_folder_path)
         for name, path in all_car_folders:

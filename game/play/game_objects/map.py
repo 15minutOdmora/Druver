@@ -191,7 +191,7 @@ class Map:
             current_position[0] = 0
             for j in range(len(ground_images[i])):
                 image = ground_images[i][j]
-                mask_image = ground_images[i][j]
+                mask_image = mask_images[i][j]
                 # Initializing Tile position by passing current_position, does not work as the initialized position
                 # takes the last assigned value of current_position.
                 self.tiles[i].append(
@@ -252,6 +252,13 @@ class Map:
             if 0 <= i <= len(self.tiles) - 1:
                 if 0 <= j <= len(self.tiles[i]) - 1:
                     self.visible_tiles.append(indexes)
+
+    def get_mask_value(self, position: list[int, int]) -> tuple:
+        j = int(position[0] // self.tile_size[0])
+        i = int(position[1] // self.tile_size[1])
+        pos_x = int(position[0] % self.tile_size[0])
+        pos_y = int(position[1] % self.tile_size[1])
+        return self.tiles[i][j].mask_image.get_at((pos_x, pos_y))
 
     def update(self) -> None:
         """

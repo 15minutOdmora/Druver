@@ -47,6 +47,7 @@ class TimeTrial:
         # Load player
         self.car = Car(
             self.controller,
+            current_map=self.map,
             car_name=self.car_name,
             initial_position=[2050, 1650]
         )

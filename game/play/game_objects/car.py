@@ -12,11 +12,11 @@ from game.helpers.file_handling import ImageLoader, Json
 
 class Car:
     """@DynamicAttrs"""
-    def __init__(self, controller, car_name: str, initial_position=[0, 0]):
+    def __init__(self, controller, current_map, car_name: str, initial_position=[0, 0]):
         self.screen = pygame.display.get_surface()
         self.controller = controller
         self.position = initial_position
-
+        self.map = current_map
         # Load car data
         self.name = car_name
         self.folder = join_paths(Paths.cars, self.name)
@@ -25,6 +25,7 @@ class Car:
         self.angle_per_image = 360 // self.number_of_images  # This is the size of angle between each image
         self.image_index = 0
         self.image_size = self.images[0].get_size()
+        self.half_image_size = self.image_size[0] // 2, self.image_size[1] // 2
         self.screen_position = [SCREEN_SIZE[0] // 2 - self.image_size[0] // 2, SCREEN_SIZE[1] // 2 - self.image_size[1] // 2]
         # Load configuration and update with base configuration so there are no attributes missing
         config = Json.load(join_paths(self.folder, "config.json"))
@@ -78,11 +79,18 @@ class Car:
     def update_current_image_index(self):
         self.image_index = min(int((self.angle - 90) // self.angle_per_image), self.number_of_images - 1)
 
+    def update_collision(self):
+        center_pos = (self.position[0] + self.half_image_size[0], self.position[1] + self.half_image_size[1])
+        val = self.map.get_mask_value(center_pos)
+        if val[0] != 255:
+            self.angle += 180
+
     def update(self):
         self.update_throttle()
         self.update_velocity()
         self.update_steering()
         self.update_angle()
+        self.update_collision()
         self.update_current_image_index()
 
     def draw(self):

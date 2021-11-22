@@ -13,6 +13,9 @@ from game.helpers.file_handling import DirectoryReader, ImageLoader
 
 
 class Button(Item):
+    """
+    Button class for drawing simple buttons on screen, each button is just a rectangle with text inside.
+    """
     def __init__(self,
                  controller,
                  position: list[int] = [0, 0],
@@ -22,11 +25,20 @@ class Button(Item):
                  fill_color: tuple[int] = BaseColors.button_fill,
                  border_color: tuple[int] = BaseColors.button_outline,
                  movable: bool = False) -> object:
+        """
+        :param controller: Controller object
+        :param position: list[int, int] position of button on screen
+        :param size: tuple[int, int] size of button
+        :param on_click: Callable function that is called when a click on the button is performed
+        :param text: Text or str displayed and centered inside button
+        :param fill_color: tuple[int, int, int] RGB of color to fill the button with
+        :param border_color: tuple[int, int, int] RGB of color to outline the button with
+        :param movable: bool if button can be moved
+        """
         super().__init__(controller, position, size, on_click, movable)
-
         self.screen = pygame.display.get_surface()
         self.controller = controller
-
+        # Check if passed argument is string => create Text object
         if type(text) is str:
             self.text = Text(
                 text=text,
@@ -34,31 +46,40 @@ class Button(Item):
             )
         else:
             self.text = text
-
+        # Set colors
         self._fill_color = fill_color  # These ones define the colors
         self._border_color = border_color
         self.fill_color = self._fill_color  # These ones get used
         self.border_color = self._border_color
-
+        # Set position of text and add object to items
         self.text.position = self.get_text_position()
-
         self.items.append(
             self.text
         )
 
-    def get_text_position(self) -> tuple[int]:
+    def get_text_position(self) -> list[int, int]:
+        """
+        Method calculates the position of text inside button to that it is centered.
+        :return: list[int, int] position of centered text
+        """
         # Center text in button
         x_pos = int((self.x + (self.width * 0.5)) - (self.text.width * 0.5))
         y_pos = int((self.y + (self.height * 0.5)) - (self.text.height * 0.5))
-        return x_pos, y_pos
+        return [x_pos, y_pos]
 
-    def update(self):
+    def update(self) -> None:
+        """
+        Method updates self and re-sets text position.
+        """
         # Call parent method
         super(self.__class__, self).update()
         # And then re center text
         self.text.position = self.get_text_position()
 
-    def draw(self):
+    def draw(self) -> None:
+        """
+        Method draws button along with its text on screen.
+        """
         # Switch colors if hovered
         if self.hovered:
             self.border_color = self._border_color
@@ -87,14 +108,25 @@ class Button(Item):
 
 
 class AnimatedButton(Item):
+    """
+
+    """
     def __init__(self,
                  controller,
                  folder_path: str,
-                 position: list[int] = [0, 0],
+                 position: list[int, int] = [0, 0],
                  on_click: Callable = lambda: None,
                  movable: bool = False,
-                 animation_speed=1,
+                 animation_speed: float = 1,
                  ):
+        """
+        :param controller: Controller object
+        :param folder_path: str path to folder of button images with sub-directories: on_hover, on_click, normal
+        :param position: list[int, int] position of button on screen
+        :param on_click: Callable function executed once the button receives a click
+        :param movable: bool if button can be moved
+        :param animation_speed: float or int representing animation speed (image iteration for every frame)
+        """
         # Initialize image lists and indexes(current displayed images)
         self.normal_images, self.on_click_images, self.on_hover_images = [], [], []
         self.normal_images_index, self.on_click_images_index, self.on_hover_images_index = 0, 0, 0
@@ -118,7 +150,10 @@ class AnimatedButton(Item):
         super().__init__(controller, position, size, on_click, movable=movable)
 
     def update(self):
-        """ Overwrite items update method. """
+        """
+        Overwrite items update method from super.
+        Display correct images and update all items.
+        """
         self.hovered = self.rect.collidepoint(self.controller.mouse_position)
         if self.hovered:
             if not (self.on_hover_images_index >= len(self.on_hover_images) - 1):
@@ -144,7 +179,10 @@ class AnimatedButton(Item):
             item.update()
 
     def draw(self):
-        """ Overwrite items draw method. """
+        """
+        Overwrite super draw method.
+        Draws currently displayed image on screen.
+        """
         self.screen.blit(self.current_image_list[round(self.current_image_index)], self.position)
         for item in self.items:
             item.draw()

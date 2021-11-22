@@ -6,8 +6,15 @@ import pygame
 
 
 class MusicPlayer:
-    def __init__(self, game, path_to_playlists):
-        self.game = game
+    """
+    MusicPlayer class is used to play music files that are stored in playlist(folders). You can then move between
+    playlists or songs between playlist, pause/play and skip songs.
+    """
+    def __init__(self, path_to_playlists):
+        """
+        :param path_to_playlists: str path to folder containing playlist folders, name of each playlist is defined
+                                  by the name of the folder
+        """
         pygame.mixer.init()
 
         self.playlists: list[tuple[str]] = DirectoryReader.get_all_folders(path_to_playlists)
@@ -19,9 +26,8 @@ class MusicPlayer:
 
         pygame.mixer.music.load(self.current_playlist_songs[self.current_song_index][1])
         pygame.mixer.music.play()
-
+        # Get and set initial volume
         self._volume = pygame.mixer.music.get_volume()
-        # Set initial volume
         self.volume = 0.3
 
         self.paused = True
@@ -38,30 +44,31 @@ class MusicPlayer:
         self._volume = vol
         pygame.mixer.music.set_volume(vol)
 
-    def change_volume(self, *args, **kwargs):
+    def change_volume(self, vol):
         """
-        Method changes the current volume, the first argument is the new volume value in range [0, 1]
+        Method changes the current volume, the first argument is the new volume value in range [0, 1].
+        :param vol: float representing volume to change to in range [0, 1]
         """
-        self.volume = args[0]
+        self.volume = vol
 
     def get_current_song_name(self) -> str:
         """
         Method returns current songs name.
+        :return: str name of current song playing, without file extension
         """
         return self.current_playlist_songs[self.current_song_index][0].split(".")[0]  # Ignore exstension
 
     def get_current_playlist_name(self) -> str:
         """
         Method returns the current playlists name.
+        :return: str name of current playlist
         """
         return self.current_playlist[0]
 
     def change_playlist(self, to_playlist: int) -> None:
         """
-        Method will change the current playlist to the selected one
-
-        Args:
-            to_playlist (int): Index of station to switch to
+        Method will change the current playlist to the selected one.
+        :param to_playlist: int Index of station to switch to
         """
         if to_playlist <= len(self.playlists) - 1:
             # Change station (and station index)
@@ -79,9 +86,7 @@ class MusicPlayer:
     def get_playlists(self) -> list[tuple]:
         """
         Method gets all available playlists and returns a list containing tuples (int: index, str: radio_name)
-
-        Returns:
-            list[tuple[int, str]]: List of available playlists, index in list and their names
+        :return: list[tuple[int, str]] List of available playlists, index in list and their names
         """
         return [(i, station[0]) for i, station in enumerate(self.playlists)]
 
@@ -110,7 +115,7 @@ class MusicPlayer:
 
     def previous_song(self) -> None:
         """
-        Method plays previous song
+        Method plays previous song in the current playlists song list.
         """
         self.current_song_index -= 1
         if self.current_song_index < 0:
