@@ -51,19 +51,20 @@ class WelcomePage(Page):
             item=self.test_button,
             align="centre"
         )
-        # Settings button
-        self.settings_button = Button(
+        # Car Boundaries button
+        self.car_boundaries_button = Button(
             self.controller,
             size=(180, 50),
             text=Text(
-                text="Settings",
+                text="Set Car Boundaries",
                 size=36
-            )
+            ),
+            on_click=helpers.create_callable(self.controller.redirect_to_page, "CarBoundariesPage")
         )
         self.grid.add_item(
             row=5,
             col=1,
-            item=self.settings_button,
+            item=self.car_boundaries_button,
             align="centre"
         )
         # Credits button
