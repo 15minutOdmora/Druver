@@ -6,6 +6,7 @@ from game.helpers.helpers import create_callable
 from game.pages.page import Page
 from game.gui.canvas import Canvas
 from game.gui.button import Button
+from game.gui.image import StaticImage
 
 
 class CarBoundariesPage(Page):
@@ -14,6 +15,12 @@ class CarBoundariesPage(Page):
     """
     def __init__(self, controller):
         super().__init__(controller)
+
+        self.image = StaticImage(
+            image_path="game/assets/objects/cars/Gaudi/images/0001.png",
+            position=[300, 200]
+        )
+        self.add_item(self.image)
 
         self.canvas = Canvas(
             controller,
