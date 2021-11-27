@@ -30,7 +30,17 @@ class Line:
         self.color = color
         self.width = width
 
+    def get_points(self) -> list[list[int]]:
+        """
+        Method returns line points, start and end point.
+        :return: list[list[int]] list containing points (also defined as lists)
+        """
+        return [self.position, self.end_point]
+
     def draw(self) -> None:
+        """
+        Method draws line on screen.
+        """
         pygame.draw.line(self.screen, self.color, self.position, self.end_point, width=self.width)
 
 
@@ -73,6 +83,13 @@ class Rectangle:
             [self.position[0], self.position[1]],
             [value[0] - self.position[0], value[1] - self.position[1]]
         )
+
+    def get_points(self) -> list[list[int]]:
+        """
+        Method returns rectangle points, start point (top left usually) and end point (bottom right usually).
+        :return: list[list[int]] list containing points (also defined as lists)
+        """
+        return [self.position, self.end_point]
 
     def draw(self) -> None:
         """
@@ -168,6 +185,13 @@ class Canvas(Item):
         """
         if change_to in self.available_shapes.keys():
             self.currently_drawing = self.available_shapes[change_to]
+
+    def get_drawn_items(self) -> list:
+        """
+        Method returns a list of all currently drawn objects on canvas.
+        :return: list of objects (Line, Rectangle, ...)
+        """
+        return self.items
 
     def update(self) -> None:
         """
