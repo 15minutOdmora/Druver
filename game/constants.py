@@ -30,8 +30,8 @@ def abs_path(relative_path):
     return os.path.abspath(relative_path)
 
 
-def join_paths(path1, path2):
-    return os.path.join(path1, path2)
+def join_paths(path1, *paths):
+    return os.path.join(path1, *paths)
 
 
 class Paths:

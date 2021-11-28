@@ -71,40 +71,42 @@ class Button(Item):
         """
         Method updates self and re-sets text position.
         """
-        # Call parent method
-        super(self.__class__, self).update()
-        # And then re center text
-        self.text.position = self.get_text_position()
+        if self.visible:
+            # Call parent method
+            super(self.__class__, self).update()
+            # And then re center text
+            self.text.position = self.get_text_position()
 
     def draw(self) -> None:
         """
         Method draws button along with its text on screen.
         """
-        # Switch colors if hovered
-        if self.hovered:
-            self.border_color = self._border_color
-            self.fill_color = self._fill_color
-        else:
-            self.border_color = self._fill_color
-            self.fill_color = self._border_color
+        if self.visible:
+            # Switch colors if hovered
+            if self.hovered:
+                self.border_color = self._border_color
+                self.fill_color = self._fill_color
+            else:
+                self.border_color = self._fill_color
+                self.fill_color = self._border_color
 
-        pygame.draw.rect(
-            self.screen,
-            self.border_color,
-            self.rect,
-            width=0
-        )
-        pygame.draw.rect(
-            self.screen,
-            self.fill_color,
-            self.rect,
-            width=3
-        )
-        self.text.color = self.fill_color
-        self.text.update()
+            pygame.draw.rect(
+                self.screen,
+                self.border_color,
+                self.rect,
+                width=0
+            )
+            pygame.draw.rect(
+                self.screen,
+                self.fill_color,
+                self.rect,
+                width=3
+            )
+            self.text.color = self.fill_color
+            self.text.update()
 
-        for item in self.items:
-            item.draw()
+            for item in self.items:
+                item.draw()
 
 
 class AnimatedButton(Item):
