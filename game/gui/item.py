@@ -34,7 +34,7 @@ class Item:
         self.rect = pygame.Rect(position[0], position[1], size[0], size[1])
 
         self.hovered = False
-        self.visible = False
+        self.visible = True
         self.selected: bool = False
 
         self._on_click: Callable = on_click

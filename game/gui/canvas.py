@@ -97,6 +97,70 @@ class Rectangle:
         """
         pygame.draw.rect(self.screen, self.color, self.rect, self.width)
 
+    def __str__(self):
+        return f"<Rectangle: {self.position} to {self.end_point}>"
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class Point:
+    """
+    Class representing one drawable rectangle used by canvas.
+    """
+    def __init__(self,
+                 screen,
+                 position: list[int],
+                 color: tuple[int, int, int] = (255, 255, 255),
+                 width: int = 2):
+        """
+        :param screen: pygame.Surface to draw on
+        :param position: list[int] position of rectangle
+        :param end_point: list[int] end position of rectangle
+        :param color: tuple[int, int, int] color of rectangle
+        :param width: int width of rectangle lines
+        """
+        self.screen = screen
+        self.position = position
+        self.color = color
+        self.width = width
+
+    def draw(self):
+        pygame.draw.circle(
+            self.screen,
+            self.color,
+            self.position,
+            radius=self.width,
+        )
+
+    def __str__(self):
+        return f"<Point: {self.position}, width = {self.width}>"
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class SetOfPoints:
+    def __init__(self, points: list[Point] = []):
+        self.points = points
+
+    def add_point(self, point: Point) -> None:
+        self.points.append(point)
+
+    def draw(self):
+        for point in self.points:
+            point.draw()
+
+    def __str__(self):
+        string = "<SetOfPoints: \n"
+        for point in self.points:
+            string += f"    {point}\n"
+        string += "/>"
+        return string
+
+    def __repr__(self):
+        return self.__str__()
+
 
 class Canvas(Item):
     """

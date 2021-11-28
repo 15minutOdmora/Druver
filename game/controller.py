@@ -40,9 +40,10 @@ class Controller:
             "StartGamePage": StartGamePage,
             "TimeTrial": TimeTrial,
             "SelectionPage": SelectionPage,
-            "CarBoundariesPage": CarBoundariesPage
+            "CarBoundariesPage": CarBoundariesPage,
+            "GenerateCarBoundariesPage": GenerateCarBoundariesPage
         }
-        self.page_stack = UniqueStack()
+        self.page_stack = Stack()
 
         self.current_page = WelcomePage
 

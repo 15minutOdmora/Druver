@@ -91,6 +91,28 @@ def rotate_2d_vector(vector: Vector, angle: float) -> Vector:
     return Vector([x, y])
 
 
+def rotate_3d_vector(vector: Vector, angle: float, around_axis: str = "x"):
+    if vector.dimension != 3:
+        raise ValueError(f"rotate_3d_vector: Passed vector {vector} is not 3-dimensional.")
+    ang = math.radians(angle)
+    _x, _y, _z = vector.values[0], vector.values[1], vector.values[2]
+    if around_axis == "x":
+        x = _x
+        y = math.cos(ang) * _y - math.sin(ang) * _z
+        z = math.sin(ang) * _y + math.cos(ang) * _z
+    elif around_axis == "y":
+        x = math.cos(ang) * _x + math.sin(ang) * _z
+        y = _y
+        z = - math.sin(ang) * _x + math.cos(ang) * _z
+    elif around_axis == "z":
+        x = math.cos(ang) * _x - math.sin(ang) * _y
+        y = math.sin(ang) * _x + math.cos(ang) * _y
+        z = _z
+    else:
+        raise ValueError(f"rotate_3d_vector: Passed around_axis = {around_axis} parameter is incorrect.")
+    return Vector([x, y, z])
+
+
 def make_vector(val):
     """
     Function creates vector from passed value. Raises error if not possible.
