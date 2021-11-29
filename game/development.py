@@ -28,7 +28,8 @@ class Development:
         self._current_fps_index: int = 0
         self.avg_fps: int = 0
 
-        self.items: list[Callable] = []
+        self.items: list = []
+        self.callable_functions = []
 
         self.add(self.__draw_fps)  # Add the draw fps method to items
         self.add(self.__draw_page_stack)
@@ -75,13 +76,22 @@ class Development:
         Method adds function to items, function then gets executed each loop.
         :param func: Function name -> callable
         """
-        self.items.append(func)
+        self.callable_functions.append(func)
+
+    def add_item(self, item) -> None:
+        """
+        Method adds item to self.
+        :param item: Item to add to self
+        """
+        self.items.append(item)
 
     def update(self):
         """
         Method used for updating all data stored in self.
         """
         self.__get_fps()
+        for item in self.items:
+            item.update()
 
     def draw(self) -> None:
         """
@@ -90,4 +100,6 @@ class Development:
         if self.visible:
             self.update()
             for item in self.items:
-                item()  # Call each drawing function
+                item.draw()
+            for func in self.callable_functions:
+                func()  # Call each drawing function
