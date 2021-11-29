@@ -27,10 +27,10 @@ class Game:
         self._dt = 0  # Change of time between seconds
         self.paused = False  # If game is paused
 
+        self.development = Development(self)
         self.controller = Controller(self)
         self.window = Window(self)
         self.input = Input(self)
-        self.development = Development(self)
 
     @property
     def dt(self) -> float:

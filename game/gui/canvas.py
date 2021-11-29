@@ -125,7 +125,10 @@ class Point:
         self.color = color
         self.width = width
 
-    def draw(self):
+    def draw(self) -> None:
+        """
+        Method draws a circle on screen based on its position and diameter (width).
+        """
         pygame.draw.circle(
             self.screen,
             self.color,
@@ -141,13 +144,26 @@ class Point:
 
 
 class SetOfPoints:
+    """
+    Class for storing multiple points and drawing them as a set.
+    """
     def __init__(self, points: list[Point] = []):
+        """
+        :param points: list[Point] optional pre-defined list of points to be included in set
+        """
         self.points = points
 
     def add_point(self, point: Point) -> None:
+        """
+        Method adds one point to set.
+        :param point: Point object to add to set
+        """
         self.points.append(point)
 
-    def draw(self):
+    def draw(self) -> None:
+        """
+        Method draws every point in set.
+        """
         for point in self.points:
             point.draw()
 

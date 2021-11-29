@@ -4,7 +4,7 @@ Page for generating car boundaries and tyre positions on shifted perspective vie
 
 from game.constants import SCREEN_SIZE, Paths
 from game.helpers.helpers import create_callable
-from game.helpers.file_handling import DirectoryReader, join_paths
+from game.helpers.file_handling import DirectoryReader, join_paths, Json
 from game.pages.page import Page
 from game.gui.canvas import Canvas, SetOfPoints, Point
 from game.gui.button import Button
@@ -14,44 +14,17 @@ from game.gui.carousel import HorizontalCarousel
 from game.gui.grid import Grid
 from game.gui.image import FolderImages, ResizableImage
 
-from game.logic.linear_math import *
+from game.logic.car_boundries_rotation import CarBoundariesGenerator, get_relative_corner_positions, get_image_corner_positions
 
 
 half_screen = SCREEN_SIZE[0] // 2, SCREEN_SIZE[1] // 2
 
 
-def get_relative_corner_positions(rect, relative_position, image_size):
-    """
-    Function calculates corner points of passed rectangle relative to a passed position.
-    :param rect: list[lit[int]] list of start position on screen and end position on screen [[start], [end]]
-    :param relative_position: list[int] position on screen to which the calculated positions should be relative to.
-    :return: list of 4 lists containing each corner point of rectangle -> [top-left, top-right, bottom-left, bottom-right]
-    """
-    # Get image points, bottom left corner of image is on (0, 0)
-    image_points = [
-        [0, image_size[1]],
-        list(image_size),
-        [0, 0],
-        [image_size[0], 0]
-    ]
-    # Get corner points
-    start_pos, end_pos = rect[0], rect[1]
-    width, height = end_pos[0] - start_pos[0], end_pos[1] - start_pos[1]
-    relative_pos = relative_position
-    left_x = start_pos[0] - relative_pos[0]
-    right_x = start_pos[0] + width - relative_pos[0]
-    top_y = image_size[1] - (start_pos[1] - relative_pos[1])
-    bottom_y = image_size[1] - (start_pos[1] + height - relative_pos[1])
-    corner_points = [
-        [left_x, top_y],
-        [right_x, top_y],
-        [left_x, bottom_y],
-        [right_x, bottom_y]
-    ]
-    return image_points, corner_points
-
-
 class GenerateCarBoundariesPage(Page):
+    """
+    Page used for selecting car boundaries on first image of car -> preview all points (every angle) by iterating
+    with the Next button, generate all points and save to cars config file using Generate button.
+    """
     def __init__(self, controller, car_name_func):
         super().__init__(controller)
         self.car_name = car_name_func()  # Fetch selected cars name
@@ -101,134 +74,257 @@ class GenerateCarBoundariesPage(Page):
                 on_click=create_callable(self.canvas.undo)
             )
         )
+        # Type of boundaries selection
+        self.car_boundaries_color = (0, 0, 255)  # Blue color
+        self.car_tyre_position_color = (255, 0, 0)  # Red color
+        # Select car boundaries button
+        self.add_item(
+            item=Button(
+                controller=self.controller,
+                position=[400, 250],
+                size=(130, 30),
+                text="Select boundaries",
+                on_click=create_callable(self.canvas.set_color, self.car_boundaries_color)
+            )
+        )
+        self.add_item(
+            item=Button(
+                controller=self.controller,
+                position=[400, 290],
+                size=(130, 30),
+                text="Select tyre positions",
+                on_click=create_callable(self.canvas.set_color, self.car_tyre_position_color)
+            )
+        )
         # Save shape button
         self.save_shape_button = Button(
             controller=self.controller,
             position=[710, 285],
             size=(60, 35),
             text="Save",
-            on_click=create_callable(self.generate)
+            on_click=create_callable(self.save_drawn)
         )
         self.add_item(self.save_shape_button)
-        # Save rectangle label
-        self.save_rect_label = Text(
-            text="Select corner points of car.",
-            position=[780, 285]
+        # Status label
+        self.status_label = Text(
+            position=[780, 285],
+            text="Select shapes"
         )
-        self.add_item(self.save_rect_label)
-        # Invisible next angle and generate all buttons.
-        self.next_image_button = Button(
+        self.add_item(self.status_label)
+        # Check next button
+        self.check_next_button = Button(
             controller=self.controller,
-            position=[630, 330],
-            size=(70, 35),
-            text="Next angle",
-            on_click=create_callable(self.generate_next)
+            position=[550, 330],
+            size=(100, 35),
+            text="Check next",
+            on_click=create_callable(self.check_next)
         )
-        self.next_image_button.visible = False
-        self.add_item(self.next_image_button)
+        self.check_next_button.visible = False
+        self.add_item(self.check_next_button)
+        # Generate all button
+        self.generate_all_button = Button(
+            controller=self.controller,
+            position=[660, 330],
+            size=(100, 35),
+            text="Generate all",
+            on_click=create_callable(self.generate_all)
+        )
+        self.generate_all_button.visible = False
+        self.add_item(self.generate_all_button)
 
-        self.image_points = None
-        self.corner_points = None
+        self.point_dict = {}
 
+        self.currently_drawing_list = None
+        self.boundaries_generator = None
         self.current_angle = 0
+        self.angle_increment = 360 / self.folder_images.number_of_images
 
-        self.currently_drawing = None
+        self.first_next = True  # To check if next has been clicked already
+        self.saved = False
 
     def update(self) -> None:
+        """
+        Update status label and every other item attached to self.
+        """
         # Do stuff
-        if self.image_points:
-            self.save_rect_label.text = "Saved"
+        if not self.saved:
+            if len(self.point_dict) > 0:
+                self.status_label.text = f"Saved {len(self.point_dict)} rectangles."
         # Call super method
         super(GenerateCarBoundariesPage, self).update()
 
     def draw(self) -> None:
+        """
+        Method draws every item attached to self and the currently drawing items saved in currently drawing list ->
+        these are drawn generated points.
+        """
         super(GenerateCarBoundariesPage, self).draw()
-        if self.currently_drawing:
-            self.currently_drawing.draw()
+        if self.currently_drawing_list:
+            for item in self.currently_drawing_list:
+                item.draw()
 
-    def reset(self):
+    def reset(self) -> None:
+        """
+        Method resets canvas and all other attributes.
+        """
+        self.canvas.clear()
         self.folder_images.reset()
-        self.canvas.clear()
-        self.image_points, self.corner_points = None, None
-        self.save_rect_label.text = "Select corner points of car."
-        self.next_image_button.visible = False
+        self.close_generation()
         self.current_angle = 0
-        self.currently_drawing = None
+        self.currently_drawing_list = None
+        self.status_label.text = "Select tyre positions"
+        self.first_next = True
 
-    def generate(self):
+    def open_generation(self) -> None:
+        """
+        Method sets generate and next buttons to visible.
+        """
+        self.check_next_button.visible = True
+        self.generate_all_button.visible = True
+
+    def close_generation(self) -> None:
+        """
+        Method hides generate and next buttons.
+        """
+        self.check_next_button.visible = False
+        self.generate_all_button.visible = False
+
+    def save_drawn(self) -> None:
+        """
+        Method saves drawn rectangles (marking tyre positions and car boundaries) to attribute.
+        Initializes boundaries_generator.
+        """
         items = self.canvas.get_drawn_items()
-        if len(items) != 1:
-            self.save_rect_label.text = "Only one Rectangle should be drawn!"
+        if len(items) == 0:
+            self.status_label.text = "No shapes drawn on canvas!"
         else:
-            # Get relative corner points of selected rectangle
-            rect = items[0].get_points()
-            self.image_points, self.corner_points = get_relative_corner_positions(
-                rect,
-                self.folder_images.position,
-                self.folder_images.size
-            )
-            self.next_image_button.visible = True
-            self.generate_next()
+            # For every item fetched from canvas
+            # Check color and save its relative positions to point_sets
+            for item in items:
+                if item.color == self.car_boundaries_color:
+                    self.point_dict["boundaries"] = get_relative_corner_positions(
+                        rect=item.get_points(),
+                        relative_position=self.folder_images.position,
+                        image_size=self.folder_images.size
+                    )
+                elif item.color == self.car_tyre_position_color:
+                    self.point_dict["tyres"] = get_relative_corner_positions(
+                        rect=item.get_points(),
+                        relative_position=self.folder_images.position,
+                        image_size=self.folder_images.size
+                    )
+            if len(self.point_dict) > 0 and "tyres" in self.point_dict.keys():  # If points were added, tyres exist
+                self.open_generation()
+                # Get centre point of tyres positions -> initialize boundaries generator
+                tyres = self.point_dict["tyres"]
+                center_point = [(tyres[0][0] + tyres[1][0]) // 2, (tyres[0][1] + tyres[2][1]) // 2]
+                # TODO add input to get angle of projection
+                self.boundaries_generator = CarBoundariesGenerator(
+                    center_point=center_point,
+                    z_angle_of_projection=25
+                )
+                # Add points to boundaries generator
+                self.boundaries_generator.add_set_of_points(self.point_dict["tyres"], "tyres")
+                if "boundaries" in self.point_dict.keys():
+                    self.boundaries_generator.add_set_of_points(self.point_dict["boundaries"], "boundaries")
 
-    def generate_next(self):
-        self.folder_images.next_image()
-        self.canvas.clear()
-
-        v = Vector([0, 0, -1])
-        u = v * -1
-        self.current_angle -= 5.07
-        sigma_normal_vector = [0, 0, 1]
-        sigma_plane = Plane([0, 0, 0], sigma_normal_vector)
-        pi_normal_vector = [0] + rotate_2d_vector(Vector([0, 1]), -25).values
-        pi_plane = Plane([0, 0, 0], pi_normal_vector)
-        projected_image_points = []
-        for _point in self.image_points:
-            point = _point + [0]  # Add third dimension z
-            # Create line and find intersection with pi plane
-            line = Line(point=point, vector=v)
-            projected_image_points.append(line.plane_intersection(pi_plane))
-        projected_corner_points = []
-        for _point in self.corner_points:
-            point = _point + [0]  # Add third dimension z
-            # Create line and find intersection with pi plane
-            line = Line(point=point, vector=v)
-            projected_corner_points.append(line.plane_intersection(pi_plane))
-        # Find center of corner points
-        top_left = projected_corner_points[0]
-        bottom_right = projected_corner_points[3]
-        center_point = (top_left + bottom_right) * 0.5
-
-        rotated_corner_points = []
-        for vector in projected_corner_points:
-            # Create vector from center point to point
-            center_point_vector = vector - center_point
-            rotated_to_xy_cpv = rotate_3d_vector(center_point_vector, 25, around_axis="x")
-            rotated_center_point = rotate_3d_vector(rotated_to_xy_cpv, self.current_angle, around_axis="z")
-            rotated_cpv = rotate_3d_vector(rotated_center_point, -25, around_axis="x")
-            line = Line(rotated_cpv, u)
-            rotated_corner_points.append(round(line.plane_intersection(sigma_plane), 1).values[:2])
-        cp_line = Line(center_point, u)
-        sigma_center_point = cp_line.plane_intersection(sigma_plane).values[:2]
-        sigma_center_point = [sigma_center_point[0], self.folder_images.height - sigma_center_point[1]]
-        self.currently_drawing = None
+    def get_drawable_set_of_points(self, points: list[list[int]], color: tuple[int, int, int]) -> SetOfPoints:
+        """
+        Method creates a SetOfPoints based on passed points list.
+        :param points: list[list[int]] points to add to set
+        :param color: tuple[int, int, int] color of points
+        :return: SetOfPoints a drawable object
+        """
         set_of_points = SetOfPoints([])
-        for point in rotated_corner_points:
-            on_screen_point = [point[0] + self.folder_images.x + sigma_center_point[0], point[1] + self.folder_images.y + sigma_center_point[1]]
+        for point in points:
+            relative_x = self.folder_images.x + point[0]
+            relative_y = self.folder_images.y + point[1]
             set_of_points.add_point(
-                point=Point(
+                Point(
                     screen=self.screen,
-                    position=on_screen_point,
-                    color=(255, 0, 0),
+                    position=[relative_x, relative_y],
+                    color=color,
                     width=3
                 )
             )
-        self.currently_drawing = set_of_points
-        print(self.current_angle // 5, self.folder_images.current_index)
+        return set_of_points
+
+    def set_drawing_of_generated_sets_of_points(self, points: list[tuple[str, list[list[int]]]]) -> None:
+        """
+        Method creates SetOfPoints for each point set (tyre, boundaries), saves it to currently_drawing list for
+        drawing on screen.
+        :param points: list[tuple[str, list[list[int]]]] list of tuples(name, set_of_points)
+        """
+        self.currently_drawing_list = []
+        for name, set_of_points in points:
+            if name == "tyres":
+                color = self.car_tyre_position_color
+            else:
+                color = self.car_boundaries_color
+            self.currently_drawing_list.append(self.get_drawable_set_of_points(set_of_points, color))
+
+    def check_next(self) -> None:
+        """
+        Method generates next points rotated by centre of tyre rect. Angle gets incremented by angle_increment
+        """
+        if self.boundaries_generator:
+            if self.first_next:
+                self.first_next = False
+            else:
+                self.current_angle -= self.angle_increment
+                self.folder_images.next_image()
+            points = self.boundaries_generator.generate_points_rotated_by_angle(-self.current_angle)
+            relative_to_image = self.get_relative_to_image(points)
+            self.set_drawing_of_generated_sets_of_points(relative_to_image)
+            self.canvas.clear()
+
+    def get_relative_to_image(self, points: list[tuple[str, list[list[int]]]]) -> list[tuple[str, list[list[int]]]]:
+        """
+        Method calculates the relative positions of generated points based on upper left corner of image.
+        :param points: list[tuple[str, list[list[int]]]] list of tuples(name, set_of_points)
+        :return: list[tuple[str, list[list[int]]]] -> modified list
+        """
+        _points = []
+        img_height = self.folder_images.height
+        for name, point_set in points:
+            le_points = []
+            for point in point_set:
+                le_points.append(
+                    [point[0], img_height - point[1]]
+                )
+            _points.append((name, le_points))
+        return _points
+
+    def generate_all(self) -> None:
+        """
+        Method generates every rotated point for both rectangles (tyres, boundaries) for every image of car /
+        for every angle. It then saves the points to the cars config file under points: {tyres:[], boundaries: []}
+        """
+        if self.boundaries_generator:
+            positions_dictionary = {
+                "tyres": [],
+                "boundaries": []
+            }
+            self.reset()  # Reset everything
+            for i in range(self.folder_images.number_of_images):
+                if i != 0:
+                    self.current_angle -= self.angle_increment
+                points = self.boundaries_generator.generate_points_rotated_by_angle(-self.current_angle)
+                relative_to_image = self.get_relative_to_image(points)
+                for name, points in relative_to_image:
+                    if name in positions_dictionary.keys():
+                        positions_dictionary[name].append(points)
+            self.status_label.text = f"Saved {len(positions_dictionary['tyres'])} tyre points " \
+                                     f"and {len(positions_dictionary['boundaries'])} boundaries."
+            # Save to config file of car
+            Json.update(join_paths(Paths.cars, self.car_name, "config.json"), {"points": positions_dictionary})
+            self.saved = True
 
 
 class CarBoundariesPage(Page):
     """
-    Development page for defining and generating car boundaries.
+    Development page for defining and generating car boundaries. Here we select the car we would like to
+    generate points from, we then redirect to the generation page defined above.
     """
     def __init__(self, controller):
         super().__init__(controller)

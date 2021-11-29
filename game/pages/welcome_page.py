@@ -52,19 +52,18 @@ class WelcomePage(Page):
             align="centre"
         )
         # Car Boundaries button
-        self.car_boundaries_button = Button(
+        self.settings_button = Button(
             self.controller,
             size=(180, 50),
             text=Text(
-                text="Set Car Boundaries",
+                text="Settings",
                 size=36
-            ),
-            on_click=helpers.create_callable(self.controller.redirect_to_page, "CarBoundariesPage")
+            )
         )
         self.grid.add_item(
             row=5,
             col=1,
-            item=self.car_boundaries_button,
+            item=self.settings_button,
             align="centre"
         )
         # Credits button
@@ -105,3 +104,15 @@ class WelcomePage(Page):
         )
         # At end append grid
         self.add_item(self.grid)
+        # Add secret buttons
+        # Car Boundaries button gets added to development for 'secret use'
+        self.controller.game.development.add_item(Button(
+            self.controller,
+            size=(180, 50),
+            position=[350, 380],
+            text=Text(
+                text="Set Car Boundaries",
+                size=36
+            ),
+            on_click=helpers.create_callable(self.controller.redirect_to_page, "CarBoundariesPage")
+        ))
