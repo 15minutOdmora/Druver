@@ -19,11 +19,36 @@ def get_key_pressed_dict() -> dict:
         "down": keys_pressed[pygame.K_DOWN],
         "enter": keys_pressed[pygame.K_RETURN],
         "space": keys_pressed[pygame.K_SPACE],
+        "backspace": keys_pressed[pygame.K_BACKSPACE],
         "mouse": {
             "left": mouse[0],
             "rel": mouse[1],
             "right": mouse[2]
-        }
+        },
+        "a": keys_pressed[pygame.K_a],
+        "b": keys_pressed[pygame.K_b],
+        "c": keys_pressed[pygame.K_c],
+        "d": keys_pressed[pygame.K_d],
+        "e": keys_pressed[pygame.K_e],
+        "f": keys_pressed[pygame.K_f],
+        "g": keys_pressed[pygame.K_g],
+        "h": keys_pressed[pygame.K_h],
+        "i": keys_pressed[pygame.K_i],
+        "j": keys_pressed[pygame.K_j],
+        "k": keys_pressed[pygame.K_k],
+        "l": keys_pressed[pygame.K_l],
+        "m": keys_pressed[pygame.K_m],
+        "n": keys_pressed[pygame.K_n],
+        "o": keys_pressed[pygame.K_o],
+        "p": keys_pressed[pygame.K_p],
+        "r": keys_pressed[pygame.K_r],
+        "s": keys_pressed[pygame.K_s],
+        "t": keys_pressed[pygame.K_t],
+        "u": keys_pressed[pygame.K_u],
+        "v": keys_pressed[pygame.K_v],
+        "z": keys_pressed[pygame.K_z],
+        "x": keys_pressed[pygame.K_x],
+        "y": keys_pressed[pygame.K_y],
     }
 
 

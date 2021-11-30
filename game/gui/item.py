@@ -46,12 +46,16 @@ class Item:
         # Mouse clicked has to be a function so it returns the pointer to the object and not its value
         self.movable = movable
         if self.movable:
-            self.mouse_clicked = lambda: self.controller.mouse_pressed
             self.debounce_interval = 0
-        else:
-            self.mouse_clicked = lambda: self.controller.mouse_clicked
         # Was pressed property used for checking if mouse was pressed on item initially and is still being pressed
         self.was_pressed = False
+
+    @property
+    def mouse_clicked(self):
+        if self.movable:
+            return self.controller.mouse_pressed
+        else:
+            return self.controller.mouse_clicked
 
     @property
     def position(self) -> list[int]:
@@ -129,11 +133,11 @@ class Item:
         """ Used for updating all items attached to it(sizes, positions, etc.). """
         self.hovered = self.rect.collidepoint(self.controller.mouse_position)
         # Check if mouse was clicked on item, in the interval of the debounce time
-        if self.hovered and self.mouse_clicked() and self.debounce_time():
+        if self.hovered and self.mouse_clicked and self.debounce_time():
             self.on_click()
             self.was_pressed = True
         # Mouse was released
-        elif not self.mouse_clicked():
+        elif not self.mouse_clicked:
             self.was_pressed = False
         # If was pressed and mouse is not on the item anymore still call on_click method works if movable = True
         if self.was_pressed and self.movable:  # Only check if item is movable, otherwise get multiple clicks
