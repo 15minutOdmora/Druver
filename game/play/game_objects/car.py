@@ -26,12 +26,22 @@ class Car:
         self.image_index = 0
         self.image_size = self.images[0].get_size()
         self.half_image_size = self.image_size[0] // 2, self.image_size[1] // 2
-        self.screen_position = [SCREEN_SIZE[0] // 2 - self.image_size[0] // 2, SCREEN_SIZE[1] // 2 - self.image_size[1] // 2]
+        self.screen_position = [
+            SCREEN_SIZE[0] // 2 - self.image_size[0] // 2,
+            SCREEN_SIZE[1] // 2 - self.image_size[1] // 2
+        ]
+        # Used for leftover rotations -> draw method
+        self.center_of_screen = (
+            self.screen_position[0] + self.half_image_size[0],
+            self.screen_position[1] + self.half_image_size[1]
+        )
         # Load configuration and update with base configuration so there are no attributes missing
         config = Json.load(join_paths(self.folder, "config.json"))
         base_config = Json.load(join_paths(Paths.cars, "base_config.json"))
         base_config.update(config)
         self.config = base_config
+
+        self.angle_leftover = 0
 
         # Pre set car data
         self.throttle = 0  # Number between 0 and 1
@@ -78,6 +88,8 @@ class Car:
 
     def update_current_image_index(self):
         self.image_index = min(int((self.angle - 90) // self.angle_per_image), self.number_of_images - 1)
+        # Calculate leftover angle to 'fake' smooth rotations
+        self.angle_leftover = int((self.angle - 90) % self.angle_per_image)
 
     def update_collision(self):
         center_pos = (self.position[0] + self.half_image_size[0], self.position[1] + self.half_image_size[1])
@@ -94,7 +106,10 @@ class Car:
         self.update_current_image_index()
 
     def draw(self):
-        self.screen.blit(self.images[self.image_index], self.screen_position)
+        image = self.images[self.image_index]  # Get current image
+        rotated_image = pygame.transform.rotate(image, self.angle_leftover)  # Rotate it by leftover angle
+        new_rect = rotated_image.get_rect(center=image.get_rect(center=self.center_of_screen).center) # Get rotated rect
+        self.screen.blit(rotated_image, new_rect)
 
     def __draw_data(self):
         # Car
