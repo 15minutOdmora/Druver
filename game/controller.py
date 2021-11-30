@@ -41,7 +41,8 @@ class Controller:
             "TimeTrial": TimeTrial,
             "SelectionPage": SelectionPage,
             "CarBoundariesPage": CarBoundariesPage,
-            "GenerateCarBoundariesPage": GenerateCarBoundariesPage
+            "GenerateCarBoundariesPage": GenerateCarBoundariesPage,
+            "TestingPage": TestingPage
         }
         self.page_stack = Stack()
 

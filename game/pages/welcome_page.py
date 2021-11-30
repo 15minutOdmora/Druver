@@ -71,9 +71,10 @@ class WelcomePage(Page):
             self.controller,
             size=(180, 50),
             text=Text(
-                text="Credits",
+                text="TestingPage",
                 size=36
-            )
+            ),
+            on_click=helpers.create_callable(self.controller.redirect_to_page, "TestingPage")
         )
         self.grid.add_item(
             row=6,
