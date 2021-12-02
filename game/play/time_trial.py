@@ -13,6 +13,7 @@ from game.gui.menus import PauseMenu
 from game.gui.button import Button
 from game.gui.text import CustomText
 from game.pages.loading_page import LoadingPage
+from game.pages.welcome_page import WelcomePage
 
 
 class TimeTrial:
@@ -34,7 +35,7 @@ class TimeTrial:
                 position=[SCREEN_SIZE[0] // 2 - 20, SCREEN_SIZE[1] // 2 - 75],
                 size=[150, 40],
                 text="Quit",
-                on_click=create_callable(self.controller.redirect_to_page, "WelcomePage")
+                on_click=create_callable(self.controller.go_back_to, WelcomePage)
             )
         )
         # Create temporary loading page

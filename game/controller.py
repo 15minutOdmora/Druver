@@ -44,7 +44,7 @@ class Controller:
             "GenerateCarBoundariesPage": GenerateCarBoundariesPage,
             "TestingPage": TestingPage
         }
-        self.page_stack = Stack()
+        self.page_stack = UniqueStack()
 
         self.current_page = WelcomePage
 
@@ -133,6 +133,13 @@ class Controller:
             self.page_stack.pop()
         else:
             print(f"Controller: Redirection error calling go_back.\n   Page stack is empty.")
+
+    def go_back_to(self, to_page: any) -> None:
+        """
+        Method goes back through stack (removing pages) until it encounters to_page.
+        :param to_page: Class of page to go back to
+        """
+        self.page_stack.back_to(to_page)
 
     def pause_game(self) -> None:
         """

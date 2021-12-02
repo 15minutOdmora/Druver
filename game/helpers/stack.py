@@ -50,7 +50,7 @@ class Stack:
         :return:
         """
         if self.empty():
-            raise ValueError("take: The stack is empty.")
+            raise ValueError("Stack.take: The stack is empty.")
         el = self._data[-1]
         self._data.pop()
         self._counter -= 1
@@ -101,7 +101,7 @@ class Pointer:
 class UniqueStack(Stack):
     """
     UniqueStack extends Stack by adding pointer elements for eliminating duplicate element types inside stack.
-    Every element inside stack is either unique (in type of class) or is a pointer pointing to an already existent
+    Every element inside stack is either unique (in type of object) or is a pointer pointing to an already existent
     object instance of the same type.
     No initial data can be added to Unique stack.
     """
@@ -109,6 +109,10 @@ class UniqueStack(Stack):
         super().__init__()
         # For saving already added object types and their positions inside the self._data
         self._element_types = {}  # Dictionary type(object): index in self._data
+
+    @property
+    def cache(self):
+        return self._element_types.keys()
 
     def push(self, element):
         """
@@ -149,3 +153,22 @@ class UniqueStack(Stack):
         else:
             del self._element_types[type(element)]
             return element
+
+    def back_to(self, to_class: any) -> None:
+        """
+        Method removes elements from stack until it encounters an element of the same type as to_class.
+        :param to_class: any class
+        """
+        print(self._element_types.keys(), to_class)
+        if to_class in self._element_types.keys():
+            while len(self._data) > 1:
+                if self.peak() == to_class:
+                    self.pop()
+                    return
+                else:
+                    if self.take() not in self._element_types.keys():
+                        pass
+                    else:
+                        del self._element_types[type(self.take())]
+        else:
+            raise ValueError(f"UniqueStack.back_to: Backing to {to_class} type {to_class} would empty stack.")
