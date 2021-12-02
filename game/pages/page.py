@@ -1,5 +1,5 @@
 """
-Abstract class definition for all pages to follow.
+Module containing base implementations of pages, pages should always inherit from this classes.
 """
 
 import math
