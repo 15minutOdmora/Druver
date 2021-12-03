@@ -301,9 +301,13 @@ class GenerateCarBoundariesPage(Page):
         for every angle. It then saves the points to the cars config file under points: {tyres:[], boundaries: []}
         """
         if self.boundaries_generator:
+            # Get center point relative to image
+            centre_point = self.boundaries_generator.center_point.values  # Is vector
+            centre_point = [centre_point[0], self.folder_images.height - centre_point[1]]
             positions_dictionary = {
                 "tyres": [],
-                "boundaries": []
+                "boundaries": [],
+                "centre": centre_point
             }
             self.reset()  # Reset everything
             for i in range(self.folder_images.number_of_images):
