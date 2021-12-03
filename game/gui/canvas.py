@@ -279,14 +279,14 @@ class Canvas(Item):
         """
         self.hovered = self.rect.collidepoint(self.controller.mouse_position)
         # Check if mouse was clicked on item, in the interval of the debounce time
-        if self.hovered and self.mouse_clicked() and self.debounce_time():
+        if self.hovered and self.mouse_clicked and self.debounce_time():
             self.last_click_time = pygame.time.get_ticks()  # This has to be updated manually
             if self.selected:
                 self.drawing = True
                 self.__do_draw()
             self.selected = True
         # If was pressed and mouse is not on the item anymore still call on_click method works if movable = True
-        if self.mouse_clicked() and not self.hovered:  # Only check if item is movable, otherwise get multiple clicks
+        if self.mouse_clicked and not self.hovered:  # Only check if item is movable, otherwise get multiple clicks
             self.selected = False
             self.drawing = False
 
