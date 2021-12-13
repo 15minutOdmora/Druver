@@ -22,8 +22,14 @@ def get_all_page_classes() -> dict[str, any]:
 
     :return: dict[str, any] where key = str(name_of_class), value = class
     """
+    # Fetch all classes defined in the page.py module, save all of its subclasses that are imported here
+    all_classes = []
+    for name, cls in inspect.getmembers(sys.modules["game.pages.page"]):
+        if inspect.isclass(cls):
+            if cls.__module__ == "game.pages.page":
+                all_classes += cls.__subclasses__()
+    # Create dictionary with each classes name str as key, class as value
     pages = {}
-    all_classes = Page.__subclasses__() + ScrollablePage.__subclasses__()
     for _class in all_classes:
         pages[str(_class.__name__)] = _class
     return pages
