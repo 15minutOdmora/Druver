@@ -15,6 +15,20 @@ from game.helpers import helpers
 from game.play.time_trial import TimeTrial
 
 
+def get_all_page_classes() -> dict[str, any]:
+    """
+    Function returns a dictionary containing all classes that:
+        Are imported in this file and are subclasses of either Page or Scrollable page
+
+    :return: dict[str, any] where key = str(name_of_class), value = class
+    """
+    pages = {}
+    all_classes = Page.__subclasses__() + ScrollablePage.__subclasses__()
+    for _class in all_classes:
+        pages[str(_class.__name__)] = _class
+    return pages
+
+
 class Controller:
     """
     Main object throughout the game. Mediator between game object and everything else.
@@ -35,7 +49,7 @@ class Controller:
         self.esc_clicked: bool = False
         self.key_pressed: dict = {}
 
-        self.pages = {
+        """self.pages = {
             "WelcomePage": WelcomePage,
             "StartGamePage": StartGamePage,
             "TimeTrial": TimeTrial,
@@ -43,7 +57,8 @@ class Controller:
             "CarBoundariesPage": CarBoundariesPage,
             "GenerateCarBoundariesPage": GenerateCarBoundariesPage,
             "TestingPage": TestingPage
-        }
+        }"""
+        self.pages = get_all_page_classes()
         self.page_stack = UniqueStack()
 
         self.current_page = WelcomePage
