@@ -35,7 +35,7 @@ class Button(Item):
         :param border_color: tuple[int, int, int] RGB of color to outline the button with
         :param movable: bool if button can be moved
         """
-        super().__init__(controller, position, size, on_click, movable)
+        super().__init__(controller, position, size, on_click, True, movable)
         self.screen = pygame.display.get_surface()
         self.controller = controller
         # Check if passed argument is string => create Text object

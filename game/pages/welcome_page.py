@@ -18,11 +18,22 @@ from game.gui.grid import Grid
 class WelcomePage(Page):
     def __init__(self, controller):
         super().__init__(controller)
+
+        self.test_button_1 = Button(
+            self.controller,
+            size=(180, 50),
+            text=Text(
+                text="Start Game",
+                size=36
+            ),
+            on_click=helpers.create_callable(self.controller.redirect_to_page, "StartGamePage")
+        )
+        self.test_button_1.visible = True
+        self.add_item(self.test_button_1)
         # Page grid
         self.grid = Grid(
             rows=10,
-            columns=3,
-            visible=False
+            columns=3
         )
         # Logo on top of page
         self.logo = StaticImage(
