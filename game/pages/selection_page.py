@@ -45,6 +45,7 @@ class PlayerSelectionPage(Page):
             cont = Container(
                 position=[0, 0],
                 size=[310, 400],
+                visible=False,
                 resizable=True
             )
             cont.add_item(
@@ -104,6 +105,7 @@ class MapSelectionPage(Page):
             cont = Container(
                 position=[0, 0],
                 size=[400, 500],
+                visible=True,
                 resizable=True
             )
             cont.add_item(

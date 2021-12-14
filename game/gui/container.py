@@ -20,6 +20,7 @@ class Container(ResizableItem):
     def __init__(self,
                  position: list[int, int] = [0, 0],
                  size: tuple[int, int] = (100, 100),
+                 visible: bool = False,
                  resizable: bool = False
                  ):
         """
@@ -28,7 +29,7 @@ class Container(ResizableItem):
         :param visible: bool if container is visible, development and testing purpose
         :param resizable: bool if container can be re-sized
         """
-        super().__init__(position, size)
+        super().__init__(position, size, visible)
 
         self.resizable = resizable
 

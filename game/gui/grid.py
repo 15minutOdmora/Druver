@@ -222,9 +222,11 @@ class Grid(StaticItem):
     Col/Row size can be passed either as an int or as a float, if float gets passed it acts as a percentage size of the grid.
     Items get added to the grid by the add_item() method.
     """
+
     def __init__(self,
                  rows: int = 1,
                  columns: int = 1,
+                 visible: bool = False,
                  position: tuple[int] = (0, 0),
                  size: tuple[int] = SCREEN_SIZE):
         """
@@ -235,8 +237,8 @@ class Grid(StaticItem):
             position (tuple[int]): Position of screen, Default = (0, 0)
             size (tuple[int]): Size of grid in px, Default = SCREEN_SIZE
         """
-        super().__init__(position, size)
-        self.visible = False
+        super().__init__(position, size, visible)
+
         # Rows and columns can be passed as lists of sizes, although not recomended
         self.num_rows: int = rows if (type(rows) is int) else len(rows)
         self.num_columns: int = columns if (type(columns) is int) else len(columns)

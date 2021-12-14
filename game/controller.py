@@ -55,6 +55,15 @@ class Controller:
         self.esc_clicked: bool = False
         self.key_pressed: dict = {}
 
+        """self.pages = {
+            "WelcomePage": WelcomePage,
+            "StartGamePage": StartGamePage,
+            "TimeTrial": TimeTrial,
+            "SelectionPage": SelectionPage,
+            "CarBoundariesPage": CarBoundariesPage,
+            "GenerateCarBoundariesPage": GenerateCarBoundariesPage,
+            "TestingPage": TestingPage
+        }"""
         self.pages = get_all_page_classes()
         self.page_stack = UniqueStack()
 

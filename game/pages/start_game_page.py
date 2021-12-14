@@ -20,7 +20,8 @@ class StartGamePage(Page):
         # Page grid
         self.grid = Grid(
             rows=10,
-            columns=3
+            columns=3,
+            visible=False
         )
         # Title
         self.title = Text(
