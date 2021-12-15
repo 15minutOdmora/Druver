@@ -125,6 +125,7 @@ class UniqueStack(Stack):
         else:
             self._element_types[type(element)] = len(self._data)  # Save type and its index in list
             super(UniqueStack, self).push(element)
+        print(self._data)
 
     def peak(self) -> any:
         """
@@ -141,7 +142,7 @@ class UniqueStack(Stack):
     def take(self) -> any:
         """
         Method returns the top element from the stack while also removing it.
-        :return:
+        :return: element
         """
         if self.empty():
             raise ValueError("UniqueStack.take: The stack is empty.")
@@ -160,13 +161,13 @@ class UniqueStack(Stack):
         :param to_class: any class
         """
         print(self._element_types.keys(), to_class)
-        if to_class in self._element_types.keys():
+        if to_class in self._element_types:
             while len(self._data) > 1:
                 if self.peak() == to_class:
                     self.pop()
                     return
                 else:
-                    if self.take() not in self._element_types.keys():
+                    if self.take() not in self._element_types:
                         pass
                     else:
                         del self._element_types[type(self.take())]
