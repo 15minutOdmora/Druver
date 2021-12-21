@@ -6,6 +6,8 @@ from typing import Callable
 
 import pygame
 
+from game.helpers.helpers import create_object_repr
+
 
 class Item:
     """
@@ -152,6 +154,13 @@ class Item:
         for item in self.items:
             item.draw()
 
+    def __repr__(self) -> str:
+        """
+        Returns representation of object.
+        :return: str representation of object
+        """
+        return create_object_repr(self)
+
 
 class StaticItem:
     """
@@ -252,6 +261,13 @@ class StaticItem:
         if self.visible:
             for item in self.items:
                 item.draw()
+
+    def __repr__(self) -> str:
+        """
+        Returns representation of object.
+        :return: str representation of object
+        """
+        return create_object_repr(self)
 
 
 class ResizableItem(StaticItem):

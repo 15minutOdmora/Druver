@@ -100,6 +100,7 @@ class Pointer:
 
 class UniqueStack(Stack):
     """
+    TODO: Not working as expected
     UniqueStack extends Stack by adding pointer elements for eliminating duplicate element types inside stack.
     Every element inside stack is either unique (in type of object) or is a pointer pointing to an already existent
     object instance of the same type.
@@ -125,7 +126,6 @@ class UniqueStack(Stack):
         else:
             self._element_types[type(element)] = len(self._data)  # Save type and its index in list
             super(UniqueStack, self).push(element)
-        print(self._data)
 
     def peak(self) -> any:
         """
@@ -160,7 +160,6 @@ class UniqueStack(Stack):
         Method removes elements from stack until it encounters an element of the same type as to_class.
         :param to_class: any class
         """
-        print(self._element_types.keys(), to_class)
         if to_class in self._element_types:
             while len(self._data) > 1:
                 if self.peak() == to_class:

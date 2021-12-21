@@ -153,13 +153,6 @@ class Cell(StaticItem):
         """
         pass
 
-    def __str__(self):
-        """
-        String representation of cell.
-        """
-        out = f"Cell:\n    {self.position=}\n    {self.size=}\n    {self.align=}"
-        return out
-
 
 class Row:
     """

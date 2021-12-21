@@ -35,3 +35,17 @@ def check_function_arguments(func: Callable, *args) -> Callable:
                         f"does not have the argument {arg} in the right position."
             raise ValueError(error_msg)
     return func
+
+
+def create_object_repr(instance) -> str:
+    """
+    Function creates an object representation string by reading its class name and all attributes.
+    Formatted: ClassName(attr1=val1, attr2=val2, ... , attrN=valN)
+    :param instance: Object instance
+    :return: str representation of object
+    """
+    # Get class name
+    class_name = instance.__class__.__name__
+    # Get attributes and its values, format into string "attr=value, attr=value, ... "
+    attr_str = ", ".join([f"{attribute}={value}" for attribute, value in instance.__dict__.items()])
+    return f"{class_name}({attr_str})"
