@@ -7,4 +7,4 @@ I found library and GUI development more fun so the development has since been s
 
 Even if it isn't finished, I experimented alot and got some nice resoults, below gif previews some of the implementations:
 
-
+![Druver preview](https://github.com/15minutOdmora/Druver/blob/development/druver_preview.gif)
